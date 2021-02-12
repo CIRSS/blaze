@@ -19,7 +19,7 @@ while [ true ] ; do
     read -n 1 key
     if [[ $key = 'q' ]] ; then
         echo
-        exit ;
+        exit
     else
         echo 
         echo "Type 'q' key to stop the Blazegraph service."
