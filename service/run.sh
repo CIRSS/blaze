@@ -7,17 +7,13 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# get the directory containing this script
-SCRIPT_DIR=`dirname $0`
-
-# enter directory containing this script
-cd ${SCRIPT_DIR}
-
 # run the service
 echo
 echo "--------------------------------------------------------------------------"
-echo "The sleep service has been started in the REPRO."
+echo "The Blazegraph service will now start in the REPRO."
+echo "Connect to it by navigating in a web browser to http://localhost:9999 "
 echo
 echo "Terminate the service by typing CTRL-C in this terminal."
 echo "--------------------------------------------------------------------------"
-sleep infinity
+cd ${BLAZEGRAPH_DOT_DIR}
+${BLAZEGRAPH_CMD} 2>&1 > `eval echo ${BLAZEGRAPH_LOG}`
