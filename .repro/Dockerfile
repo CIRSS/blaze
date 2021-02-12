@@ -30,6 +30,8 @@ RUN echo '***** Add the REPRO user and group *****'                         \
     && chmod 0440 /etc/sudoers.d/repro
 
 ENV HOME /home/${REPRO_USER}
+ENV HOME_BIN ${HOME}/bin
+ENV PATH ${HOME_BIN}:${PATH}
 ENV BASHRC ${HOME}/.bashrc
 USER  ${REPRO_USER}
 WORKDIR $HOME
@@ -48,6 +50,12 @@ ENV BLAZEGRAPH_PROPERTY_FILE=${BLAZEGRAPH_DOT_DIR}/.properties
 ENV BLAZEGRAPH_OPTIONS "-server -Xmx4g -Dbigdata.propertyFile=${BLAZEGRAPH_PROPERTY_FILE}"
 ENV BLAZEGRAPH_CMD "java ${BLAZEGRAPH_OPTIONS} -jar ${BLAZEGRAPH_JAR}"
 ENV BLAZEGRAPH_LOG ${BLAZEGRAPH_DOT_DIR}/blazegraph_`date +%s`.log
+ENV BLAZEGRAPH_CLI ${HOME_BIN}/blazegraph
+
+RUN echo '***** Install the Geist blazegraph command *****'                 \
+    && mkdir -p ${HOME_BIN}                                                 \
+    && wget -O ${BLAZEGRAPH_CLI} https://github.com/CIRSS/geist/releases/download/v0.2.0/blazegraph \
+    && chmod a+rx ${BLAZEGRAPH_CLI}
 
 RUN echo '***** Start Blazegraph at login *****'                            \
     && echo "source .bashrc" >> .bash_profile                               \
