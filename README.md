@@ -1,1 +1,1 @@
-# Blazegraph-CLI
+# Blaze
