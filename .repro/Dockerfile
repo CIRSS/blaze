@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-ENV REPRO_NAME  blazegraph-cli
+ENV REPRO_NAME  blaze
 ENV REPRO_MNT   /mnt/${REPRO_NAME}
 ENV REPRO_USER  repro
 ENV REPRO_UID   1000
@@ -14,10 +14,18 @@ RUN DEBIAN_FRONTEND="noninteractive" TZ="America/Los_Angeles"               \
     apt -y install tzdata openjdk-8-jdk
 
 RUN echo '***** Install packages required for creating this image *****'    \
-    && apt -y install apt-utils wget curl makepasswd make git               \
+    && apt -y install apt-utils wget curl makepasswd gcc make git           \
                                                                             \
     && echo '***** Install command-line utility packages *****'             \
-    && apt -y install sudo less file tree
+    && apt -y install sudo man less file tree jq graphviz libxml2-utils
+
+ENV GO_VERSION       1.16
+ENV GO_DOWNLOADS_URL https://dl.google.com/go
+ENV GO_ARCHIVE       go${GO_VERSION}.linux-amd64.tar.gz
+
+RUN echo '****** Install Go development tools *****'                        \
+    && wget ${GO_DOWNLOADS_URL}/${GO_ARCHIVE} -O /tmp/${GO_ARCHIVE}         \
+    && tar -xzf /tmp/${GO_ARCHIVE} -C /usr/local
 
 RUN echo '***** Add the REPRO user and group *****'                         \
     && groupadd ${REPRO_USER} --gid ${REPRO_GID}                            \
@@ -41,6 +49,7 @@ ENV BLAZEGRAPH_RELEASES https://github.com/blazegraph/database/releases
 ENV BLAZEGRAPH_DOWNLOAD_DIR ${BLAZEGRAPH_RELEASES}/download/BLAZEGRAPH_${BLAZEGRAPH_VER}
 ENV BLAZEGRAPH_DOWNLOAD_JAR ${BLAZEGRAPH_DOWNLOAD_DIR}/blazegraph.jar
 ENV BLAZEGRAPH_JAR $HOME/blazegraph-${BLAZEGRAPH_VER}.jar
+
 RUN echo '***** Download Blazegraph jar *****'                              \
     && wget -O ${BLAZEGRAPH_JAR} ${BLAZEGRAPH_DOWNLOAD_JAR}
 
@@ -50,22 +59,17 @@ ENV BLAZEGRAPH_OPTIONS "-server -Xmx4g -Dbigdata.propertyFile=${BLAZEGRAPH_PROPE
 ENV BLAZEGRAPH_CMD "java ${BLAZEGRAPH_OPTIONS} -jar ${BLAZEGRAPH_JAR}"
 ENV BLAZEGRAPH_LOG ${BLAZEGRAPH_DOT_DIR}/blazegraph_`date +%s`.log
 
-ENV GEIST_RELEASES https://github.com/CIRSS/geist/releases/download
-ENV GEIST_VERSION 0.2.0
-ENV BLAZEGRAPH_DOWNLOAD_BINARY blazegraph-cli-${GEIST_VERSION}-linux-x86-64
-ENV BLAZEGRAPH_CLI_COMMAND ${HOME_BIN}/blazegraph
-
-RUN echo '***** Install the Geist blazegraph command *****'                 \
-    && mkdir -p ${HOME_BIN}                                                 \
-    && wget -O ${BLAZEGRAPH_CLI_COMMAND}                                    \
-        ${GEIST_RELEASES}/v${GEIST_VERSION}/${BLAZEGRAPH_DOWNLOAD_BINARY}                    \
-    && chmod a+rx ${BLAZEGRAPH_CLI_COMMAND}
-
 RUN echo '***** Start Blazegraph at login *****'                            \
     && echo "source .bashrc" >> .bash_profile                               \
     && echo "cd ${BLAZEGRAPH_DOT_DIR} && ${BLAZEGRAPH_CMD} 2>&1 > ${BLAZEGRAPH_LOG} &" >> .bash_profile
 
+ENV GOPATH ${REPRO_MNT}/.gopath
+
+RUN echo 'PATH=${GOPATH}/bin:/usr/local/go/bin:$PATH' >> ${BASHRC}
 RUN echo "export IN_RUNNING_REPRO=${REPRO_NAME}" >> ${BASHRC}
 RUN echo "cd ${REPRO_MNT}" >> ${BASHRC}
 
+ENV PATH /usr/local/go/bin:${PATH}
+
 CMD  /bin/bash -il
+

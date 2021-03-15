@@ -6,16 +6,16 @@ SCRIPT_RUNNER='../../common/run_script_example.sh'
 
 bash ${SCRIPT_RUNNER} SETUP "INITIALIZE BLAZEGRAPH INSTANCE WITH CITATIONS" << END_SCRIPT
 
-blazegraph destroy --dataset kb
-blazegraph create --dataset kb
-blazegraph import --file ../data/citations.ttl --format ttl
+blaze destroy --dataset kb --quiet
+blaze create --dataset kb --quiet
+blaze import --file ../data/citations.ttl --format ttl
 
 END_SCRIPT
 
 
 bash ${SCRIPT_RUNNER} S1 "EXPORT CITATIONS AS N-TRIPLES" << END_SCRIPT
 
-blazegraph export --format nt | sort
+blaze export --format nt | sort
 
 END_SCRIPT
 
@@ -23,7 +23,7 @@ END_SCRIPT
 bash ${SCRIPT_RUNNER} S2 "WHICH PAPERS DIRECTLY CITE WHICH PAPERS?" \
     << END_SCRIPT
 
-blazegraph select --format table << END_QUERY
+blaze query --format table << END_QUERY
 
     prefix c: <http://learningsparql.com/ns/citations#>
 
@@ -41,7 +41,7 @@ END_SCRIPT
 bash ${SCRIPT_RUNNER} S3 "WHICH PAPERS DEPEND ON WHICH PRIOR WORK?" \
     << END_SCRIPT
 
-blazegraph select --format table << END_QUERY
+blaze query --format table << END_QUERY
 
     prefix c: <http://learningsparql.com/ns/citations#>
 
@@ -59,7 +59,7 @@ END_SCRIPT
 bash ${SCRIPT_RUNNER} S4 "WHICH PAPERS DEPEND ON PAPER A?" \
     << END_SCRIPT
 
-blazegraph select --format table << END_QUERY
+blaze query --format table << END_QUERY
 
     prefix c: <http://learningsparql.com/ns/citations#>
     prefix : <http://learningsparql.com/ns/papers#>
@@ -78,7 +78,7 @@ END_SCRIPT
 bash ${SCRIPT_RUNNER} S5 "WHICH PAPERS CITE A PAPER THAT CITES PAPER A?" \
     << END_SCRIPT
 
-blazegraph select --format table << END_QUERY
+blaze query --format table << END_QUERY
 
     prefix c: <http://learningsparql.com/ns/citations#>
     prefix : <http://learningsparql.com/ns/papers#>
@@ -97,7 +97,7 @@ END_SCRIPT
 bash ${SCRIPT_RUNNER} S6 "WHICH PAPERS CITE A PAPER CITED BY PAPER D?" \
     << END_SCRIPT
 
-blazegraph select --format table << END_QUERY
+blaze query --format table << END_QUERY
 
     prefix c: <http://learningsparql.com/ns/citations#>
     prefix : <http://learningsparql.com/ns/papers#>
@@ -117,7 +117,7 @@ END_SCRIPT
 bash ${SCRIPT_RUNNER} S7 "WHAT RESULTS DEPEND DIRECTLY ON RESULTS REPORTED BY PAPER A?" \
     << END_SCRIPT
 
-blazegraph select --format table << END_QUERY
+blaze query --format table << END_QUERY
 
     prefix c: <http://learningsparql.com/ns/citations#>
     prefix : <http://learningsparql.com/ns/papers#>
@@ -136,7 +136,7 @@ END_SCRIPT
 bash ${SCRIPT_RUNNER} S7 "WHAT RESULTS DEPEND DIRECTLY OR INDIRECTLY ON RESULTS REPORTED BY PAPER A?" \
     << END_SCRIPT
 
-blazegraph select --format table << END_QUERY
+blaze query --format table << END_QUERY
 
     prefix c: <http://learningsparql.com/ns/citations#>
     prefix : <http://learningsparql.com/ns/papers#>
@@ -150,3 +150,4 @@ blazegraph select --format table << END_QUERY
 END_QUERY
 
 END_SCRIPT
+
