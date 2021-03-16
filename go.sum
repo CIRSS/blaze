@@ -1,6 +1,3 @@
-github.com/cirss/geist v0.2.1 h1:6qLmwCwDLJKFRSWN1fB3EmXl9CfBtRsAXFeHWt8n+9Q=
-github.com/cirss/geist v0.2.1/go.mod h1:NnbzzHx8tUVykSg/7ps2PCV8Ko3Qs78LVkRKVkDVqCY=
-github.com/cirss/go-cli v0.1.3/go.mod h1:rbQvOhQFfQ8FAS2MEN+aj6f66Rd7T8ZzsSeINDd+HlM=
 github.com/cirss/go-cli v0.1.4 h1:AEScclBQsrsyHXr8tjidLG4eB7xEeWlnxRzHNcUrb1E=
 github.com/cirss/go-cli v0.1.4/go.mod h1:uVlAtkq7MNtzIrGOM5KF3aezsnvM6A6eI0feDG9MzaY=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
