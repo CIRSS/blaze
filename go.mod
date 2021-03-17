@@ -6,6 +6,6 @@ go 1.16
 // replace github.com/cirss/geist => ../geist
 
 require (
-	github.com/cirss/geist v0.2.3
+	github.com/cirss/geist v0.2.4
 	github.com/cirss/go-cli v0.1.4
 )
