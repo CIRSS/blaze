@@ -10,11 +10,11 @@ import (
 func TestReportInfer_rdfs_subClassOf(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
 	load := func() {
-		Main.InReader = strings.NewReader(`
+		Program.InReader = strings.NewReader(`
 			@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 			@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 			@prefix tm: <http://tmcphill.net/ns/data#> .
@@ -29,7 +29,7 @@ func TestReportInfer_rdfs_subClassOf(t *testing.T) {
 			tm:b3 rdf:type tm:typeb .
 			tm:c1 rdf:type tm:typec .
 		`)
-		run("blaze import --format ttl")
+		Program.Invoke("blaze import --format ttl")
 	}
 
 	report := func() {
@@ -61,14 +61,14 @@ func TestReportInfer_rdfs_subClassOf(t *testing.T) {
 				{ ?c rdf:type tm:typec }
 				ORDER BY ?c ''' | tabulate }}
 		`
-		Main.InReader = strings.NewReader(q)
-		run("blaze report")
+		Program.InReader = strings.NewReader(q)
+		Program.Invoke("blaze report")
 	}
 
 	t.Run("infer-none", func(t *testing.T) {
 		outputBuffer.Reset()
-		run("blaze destroy --all --quiet")
-		run("blaze create --quiet --dataset kb --infer none")
+		Program.Invoke("blaze destroy --all --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb --infer none")
 		load()
 		report()
 		util.LineContentsEqual(t, outputBuffer.String(),
@@ -95,8 +95,8 @@ func TestReportInfer_rdfs_subClassOf(t *testing.T) {
 
 	t.Run("infer-rdfs", func(t *testing.T) {
 		outputBuffer.Reset()
-		run("blaze destroy --all --quiet")
-		run("blaze create --quiet --dataset kb --infer rdfs")
+		Program.Invoke("blaze destroy --all --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb --infer rdfs")
 		load()
 		report()
 		util.LineContentsEqual(t, outputBuffer.String(),
@@ -144,8 +144,8 @@ func TestReportInfer_rdfs_subClassOf(t *testing.T) {
 
 	t.Run("infer-owl", func(t *testing.T) {
 		outputBuffer.Reset()
-		run("blaze destroy --all --quiet")
-		run("blaze create --quiet --dataset kb --infer owl")
+		Program.Invoke("blaze destroy --all --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb --infer owl")
 		load()
 		report()
 		util.LineContentsEqual(t, outputBuffer.String(),
@@ -201,11 +201,11 @@ func TestReportInfer_rdfs_subClassOf(t *testing.T) {
 func TestReportInfer_rdf_inverseOf(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
 	load := func() {
-		Main.InReader = strings.NewReader(`
+		Program.InReader = strings.NewReader(`
 			@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 			@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 			@prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -218,7 +218,7 @@ func TestReportInfer_rdf_inverseOf(t *testing.T) {
 			person:tim verb:uses tool:mouse .
 			tool:keyboard verb:usedBy person:tim .
 		`)
-		run("blaze import --format ttl")
+		Program.Invoke("blaze import --format ttl")
 	}
 
 	report := func() {
@@ -242,14 +242,14 @@ func TestReportInfer_rdf_inverseOf(t *testing.T) {
 				{ ?usedTool verb:usedBy ?person }
 				ORDER BY ?usedTool ''' | tabulate }}
 		`
-		Main.InReader = strings.NewReader(q)
-		run("blaze report")
+		Program.InReader = strings.NewReader(q)
+		Program.Invoke("blaze report")
 	}
 
 	t.Run("infer-none", func(t *testing.T) {
 		outputBuffer.Reset()
-		run("blaze destroy --all --quiet")
-		run("blaze create --quiet --dataset kb --infer none")
+		Program.Invoke("blaze destroy --all --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb --infer none")
 		load()
 		report()
 		util.LineContentsEqual(t, outputBuffer.String(),
@@ -271,8 +271,8 @@ func TestReportInfer_rdf_inverseOf(t *testing.T) {
 
 	t.Run("infer-rdfs", func(t *testing.T) {
 		outputBuffer.Reset()
-		run("blaze destroy --all --quiet")
-		run("blaze create --quiet --dataset kb --infer rdfs")
+		Program.Invoke("blaze destroy --all --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb --infer rdfs")
 		load()
 		report()
 		util.LineContentsEqual(t, outputBuffer.String(),
@@ -294,8 +294,8 @@ func TestReportInfer_rdf_inverseOf(t *testing.T) {
 
 	t.Run("infer-owl", func(t *testing.T) {
 		outputBuffer.Reset()
-		run("blaze destroy --all --quiet")
-		run("blaze create --quiet --dataset kb --infer owl")
+		Program.Invoke("blaze destroy --all --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb --infer owl")
 		load()
 		report()
 		util.LineContentsEqual(t, outputBuffer.String(),
@@ -321,11 +321,11 @@ func TestReportInfer_rdf_inverseOf(t *testing.T) {
 func TestReportInfer_rdfs_domain_range(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
 	load := func() {
-		Main.InReader = strings.NewReader(`
+		Program.InReader = strings.NewReader(`
 			@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 			@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 			@prefix owl: <http://www.w3.org/2002/07/owl#> .
@@ -346,7 +346,7 @@ func TestReportInfer_rdfs_domain_range(t *testing.T) {
 
 			tool:mouse verb:uses person:tim .
 		`)
-		run("blaze import --format ttl")
+		Program.Invoke("blaze import --format ttl")
 	}
 
 	report := func() {
@@ -399,14 +399,14 @@ func TestReportInfer_rdfs_domain_range(t *testing.T) {
 				{ ?s verb:usedBy ?o }
 				ORDER BY ?s ?o ''' | tabulate }}
 			`
-		Main.InReader = strings.NewReader(q)
-		run("blaze report")
+		Program.InReader = strings.NewReader(q)
+		Program.Invoke("blaze report")
 	}
 
 	t.Run("infer-none", func(t *testing.T) {
 		outputBuffer.Reset()
-		run("blaze destroy --all --quiet")
-		run("blaze create --quiet --dataset kb --infer none")
+		Program.Invoke("blaze destroy --all --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb --infer none")
 		load()
 		report()
 		util.LineContentsEqual(t, outputBuffer.String(),
@@ -454,8 +454,8 @@ func TestReportInfer_rdfs_domain_range(t *testing.T) {
 
 	t.Run("infer-rdfs", func(t *testing.T) {
 		outputBuffer.Reset()
-		run("blaze destroy --all --quiet")
-		run("blaze create --quiet --dataset kb --infer rdfs")
+		Program.Invoke("blaze destroy --all --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb --infer rdfs")
 		load()
 		report()
 		util.LineContentsEqual(t, outputBuffer.String(),
@@ -508,8 +508,8 @@ func TestReportInfer_rdfs_domain_range(t *testing.T) {
 
 	t.Run("infer-owl", func(t *testing.T) {
 		outputBuffer.Reset()
-		run("blaze destroy --all --quiet")
-		run("blaze create --quiet --dataset kb --infer owl")
+		Program.Invoke("blaze destroy --all --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb --infer owl")
 		load()
 		report()
 		util.LineContentsEqual(t, outputBuffer.String(),
@@ -572,16 +572,16 @@ func TestReportInfer_rdfs_domain_range(t *testing.T) {
 // func TestReportInfer(t *testing.T) {
 
 // 	var outputBuffer strings.Builder
-// 	Main.OutWriter = &outputBuffer
-// 	Main.ErrWriter = &outputBuffer
+// 	Program.OutWriter = &outputBuffer
+// 	Program.ErrWriter = &outputBuffer
 
 // 	load := func() {
-// 		Main.InReader = strings.NewReader(`
+// 		Program.InReader = strings.NewReader(`
 // 			@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 // 			@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 // 			@prefix tm: <http://tmcphill.net/ns/data#> .
 // 		`)
-// 		run("blaze import --format ttl")
+// 		Program.Invoke("blaze import --format ttl")
 // 	}
 
 // 	report := func() {
@@ -590,14 +590,14 @@ func TestReportInfer_rdfs_domain_range(t *testing.T) {
 // 			{{ prefix "tm" "http://tmcphill.net/ns/data#" }}
 
 // 		`
-// 		Main.InReader = strings.NewReader(q)
-// 		run("blaze report")
+// 		Program.InReader = strings.NewReader(q)
+// 		Program.Invoke("blaze report")
 // 	}
 
 // 	t.Run("infer-none", func(t *testing.T) {
 // 		outputBuffer.Reset()
-// 		run("blaze destroy --dataset kb --quiet")
-// 		run("blaze create --quiet --dataset kb --infer none")
+// 		Program.Invoke("blaze destroy --dataset kb --quiet")
+// 		Program.Invoke("blaze create --quiet --dataset kb --infer none")
 // 		load()
 // 		report()
 // 		util.LineContentsEqual(t, outputBuffer.String(), `
@@ -606,8 +606,8 @@ func TestReportInfer_rdfs_domain_range(t *testing.T) {
 
 // 	t.Run("infer-rdfs", func(t *testing.T) {
 // 		outputBuffer.Reset()
-// 		run("blaze destroy --dataset kb --quiet")
-// 		run("blaze create --quiet --dataset kb --infer rdfs")
+// 		Program.Invoke("blaze destroy --dataset kb --quiet")
+// 		Program.Invoke("blaze create --quiet --dataset kb --infer rdfs")
 // 		load()
 // 		report()
 // 		util.LineContentsEqual(t, outputBuffer.String(), `
@@ -616,8 +616,8 @@ func TestReportInfer_rdfs_domain_range(t *testing.T) {
 
 // 	t.Run("infer-owl", func(t *testing.T) {
 // 		outputBuffer.Reset()
-// 		run("blaze destroy --dataset kb --quiet")
-// 		run("blaze create --quiet --dataset kb --infer owl")
+// 		Program.Invoke("blaze destroy --dataset kb --quiet")
+// 		Program.Invoke("blaze create --quiet --dataset kb --infer owl")
 // 		load()
 // 		report()
 // 		util.LineContentsEqual(t, outputBuffer.String(), `

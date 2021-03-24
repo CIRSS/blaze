@@ -10,12 +10,12 @@ import (
 func TestBlazegraphCmd_list_empty_store(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --all --quiet")
+	Program.Invoke("blaze destroy --all --quiet")
 
-	assertExitCode(t, "blaze list", 0)
+	Program.AssertExitCode(t, "blaze list", 0)
 
 	util.LineContentsEqual(t, outputBuffer.String(), ``)
 }
@@ -23,15 +23,15 @@ func TestBlazegraphCmd_list_empty_store(t *testing.T) {
 func TestBlazegraphCmd_list_default_dataset(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --all --quiet")
-	run("blaze create --quiet")
+	Program.Invoke("blaze destroy --all --quiet")
+	Program.Invoke("blaze create --quiet")
 
 	t.Run("no count", func(t *testing.T) {
 		outputBuffer.Reset()
-		assertExitCode(t, "blaze list", 0)
+		Program.AssertExitCode(t, "blaze list", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`kb
 			`)
@@ -39,7 +39,7 @@ func TestBlazegraphCmd_list_default_dataset(t *testing.T) {
 
 	t.Run("exact count", func(t *testing.T) {
 		outputBuffer.Reset()
-		assertExitCode(t, "blaze list --count exact", 0)
+		Program.AssertExitCode(t, "blaze list --count exact", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`kb         0
 			`)
@@ -47,7 +47,7 @@ func TestBlazegraphCmd_list_default_dataset(t *testing.T) {
 
 	t.Run("estimate count", func(t *testing.T) {
 		outputBuffer.Reset()
-		assertExitCode(t, "blaze list --count estimate", 0)
+		Program.AssertExitCode(t, "blaze list --count estimate", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`kb         0
 			`)
@@ -57,13 +57,13 @@ func TestBlazegraphCmd_list_default_dataset(t *testing.T) {
 func TestBlazegraphCmd_list_custom_dataset(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --all --quiet")
-	run("blaze create --quiet --dataset foo")
+	Program.Invoke("blaze destroy --all --quiet")
+	Program.Invoke("blaze create --quiet --dataset foo")
 
-	assertExitCode(t, "blaze list", 0)
+	Program.AssertExitCode(t, "blaze list", 0)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`foo
@@ -73,17 +73,17 @@ func TestBlazegraphCmd_list_custom_dataset(t *testing.T) {
 func TestBlazegraphCmd_list_custom_datasets(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --all --quiet")
-	run("blaze create --quiet --dataset foo")
-	run("blaze create --quiet --dataset bar")
-	run("blaze create --quiet --dataset baz")
+	Program.Invoke("blaze destroy --all --quiet")
+	Program.Invoke("blaze create --quiet --dataset foo")
+	Program.Invoke("blaze create --quiet --dataset bar")
+	Program.Invoke("blaze create --quiet --dataset baz")
 
 	t.Run("no count", func(t *testing.T) {
 		outputBuffer.Reset()
-		assertExitCode(t, "blaze list", 0)
+		Program.AssertExitCode(t, "blaze list", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`bar
 			 baz
@@ -93,7 +93,7 @@ func TestBlazegraphCmd_list_custom_datasets(t *testing.T) {
 
 	t.Run("exact count", func(t *testing.T) {
 		outputBuffer.Reset()
-		assertExitCode(t, "blaze list --count exact", 0)
+		Program.AssertExitCode(t, "blaze list --count exact", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`bar        0
 			 baz        0
@@ -103,7 +103,7 @@ func TestBlazegraphCmd_list_custom_datasets(t *testing.T) {
 
 	t.Run("estimate count", func(t *testing.T) {
 		outputBuffer.Reset()
-		assertExitCode(t, "blaze list --count estimate", 0)
+		Program.AssertExitCode(t, "blaze list --count estimate", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`bar        0
 			 baz        0
@@ -113,8 +113,7 @@ func TestBlazegraphCmd_list_custom_datasets(t *testing.T) {
 }
 
 var expectedListHelpOutput = string(
-	`
-	blaze list: Lists the names of the RDF datasets in the Blazegraph instance.
+	`blaze list: Lists the names of the RDF datasets in the Blazegraph instance.
 
 	usage: blaze list [<flags>]
 
@@ -127,32 +126,31 @@ var expectedListHelpOutput = string(
 				Discard normal command output
 		-silent
 				Discard normal and error command output
-
 	`)
 
 func TestBlazegraphCmd_list_help(t *testing.T) {
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
-	assertExitCode(t, "blaze list help", 0)
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
+	Program.AssertExitCode(t, "blaze list help", 0)
 	util.LineContentsEqual(t, outputBuffer.String(), expectedListHelpOutput)
 }
 
 func TestBlazegraphCmd_help_list(t *testing.T) {
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
-	assertExitCode(t, "blaze help list", 0)
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
+	Program.AssertExitCode(t, "blaze help list", 0)
 	util.LineContentsEqual(t, outputBuffer.String(), expectedListHelpOutput)
 }
 
 func TestBlazegraphCmd_list_bad_flag(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	assertExitCode(t, "blaze list --not-a-flag", 1)
+	Program.AssertExitCode(t, "blaze list --not-a-flag", 1)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`blaze list: flag provided but not defined: -not-a-flag
@@ -168,6 +166,5 @@ func TestBlazegraphCmd_list_bad_flag(t *testing.T) {
 					Discard normal command output
 			-silent
 					Discard normal and error command output
-
 		`)
 }

@@ -14,10 +14,10 @@ func TestBlazegraphCmd_status_success(t *testing.T) {
 
 	var outBuffer strings.Builder
 	var errBuffer strings.Builder
-	Main.OutWriter = &outBuffer
-	Main.ErrWriter = &errBuffer
+	Program.OutWriter = &outBuffer
+	Program.ErrWriter = &errBuffer
 
-	assertExitCode(t, "blaze status", 0)
+	Program.AssertExitCode(t, "blaze status", 0)
 
 	util.LineContentsEqual(t, errBuffer.String(), "")
 
@@ -38,10 +38,10 @@ func TestBlazegraphCmd_status_failure(t *testing.T) {
 
 	var outBuffer strings.Builder
 	var errBuffer strings.Builder
-	Main.OutWriter = &outBuffer
-	Main.ErrWriter = &errBuffer
+	Program.OutWriter = &outBuffer
+	Program.ErrWriter = &errBuffer
 
-	assertExitCode(t, "blaze status --instance http://not-a-blazegraph-instance", 1)
+	Program.AssertExitCode(t, "blaze status --instance http://not-a-blazegraph-instance", 1)
 
 	util.LineContentsEqual(t, outBuffer.String(), "")
 	util.LineContentsEqual(t, errBuffer.String(),
@@ -53,10 +53,10 @@ func TestBlazegraphCmd_status_quiet_success(t *testing.T) {
 
 	var outBuffer strings.Builder
 	var errBuffer strings.Builder
-	Main.OutWriter = &outBuffer
-	Main.ErrWriter = &errBuffer
+	Program.OutWriter = &outBuffer
+	Program.ErrWriter = &errBuffer
 
-	assertExitCode(t, "blaze status --quiet", 0)
+	Program.AssertExitCode(t, "blaze status --quiet", 0)
 
 	util.LineContentsEqual(t, outBuffer.String(), "")
 	util.LineContentsEqual(t, errBuffer.String(), "")
@@ -66,10 +66,10 @@ func TestBlazegraphCmd_status_quiet_failure(t *testing.T) {
 
 	var outBuffer strings.Builder
 	var errBuffer strings.Builder
-	Main.OutWriter = &outBuffer
-	Main.ErrWriter = &errBuffer
+	Program.OutWriter = &outBuffer
+	Program.ErrWriter = &errBuffer
 
-	assertExitCode(t, "blaze status --quiet --instance http://not-a-blazegraph-instance", 1)
+	Program.AssertExitCode(t, "blaze status --quiet --instance http://not-a-blazegraph-instance", 1)
 
 	util.LineContentsEqual(t, outBuffer.String(), "")
 	util.LineContentsEqual(t, errBuffer.String(),
@@ -78,8 +78,7 @@ func TestBlazegraphCmd_status_quiet_failure(t *testing.T) {
 }
 
 var expectedStatusHelpOutput = string(
-	`
-	blaze status: Requests the status of the Blazegraph instance, optionally waiting until
+	`blaze status: Requests the status of the Blazegraph instance, optionally waiting until
 	the instance is fully running. Returns status in JSON format.
 
 	usage: blaze status [<flags>]
@@ -93,32 +92,31 @@ var expectedStatusHelpOutput = string(
 				Discard normal and error command output
 		-timeout milliseconds
 				Number of milliseconds to wait for Blazegraph instance to respond
-
 	`)
 
 func TestBlazegraphCmd_status_help(t *testing.T) {
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
-	assertExitCode(t, "blaze status help", 0)
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
+	Program.AssertExitCode(t, "blaze status help", 0)
 	util.LineContentsEqual(t, outputBuffer.String(), expectedStatusHelpOutput)
 }
 
 func TestBlazegraphCmd_help_status(t *testing.T) {
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
-	assertExitCode(t, "blaze help status", 0)
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
+	Program.AssertExitCode(t, "blaze help status", 0)
 	util.LineContentsEqual(t, outputBuffer.String(), expectedStatusHelpOutput)
 }
 
 func TestBlazegraphCmd_status_bad_flag(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	assertExitCode(t, "blaze status --not-a-flag", 1)
+	Program.AssertExitCode(t, "blaze status --not-a-flag", 1)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`blaze status: flag provided but not defined: -not-a-flag
@@ -134,6 +132,5 @@ func TestBlazegraphCmd_status_bad_flag(t *testing.T) {
 				Discard normal and error command output
 		-timeout milliseconds
 				Number of milliseconds to wait for Blazegraph instance to respond
-
 		`)
 }

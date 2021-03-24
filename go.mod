@@ -2,7 +2,8 @@ module github.com/cirss/blaze
 
 go 1.16
 
-// replace github.com/cirss/go-cli => ../go-cli
+replace github.com/cirss/go-cli => ../go-cli
+
 // replace github.com/cirss/geist => ../geist
 
 require (

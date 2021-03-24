@@ -7,13 +7,13 @@ import (
 	"github.com/cirss/go-cli/pkg/cli"
 )
 
-var Main *cli.ProgramContext
+var Program *cli.ProgramContext
 
 func init() {
-	Main = cli.NewProgramContext("blaze", main)
+	Program = cli.NewProgramContext("blaze", main)
 }
 
 func main() {
-	cc := blaze.NewBlazeCommandContext(Main)
+	cc := blaze.NewBlazeCommandContext(Program)
 	cc.InvokeCommand(os.Args)
 }

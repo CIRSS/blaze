@@ -26,7 +26,7 @@ func NewBlazeCommandContext(pc *cli.ProgramContext) (cc *cli.CommandContext) {
 				"the instance is fully running. Returns status in JSON format."},
 	})
 
-	cc = pc.NewCommandContext(commands)
+	cc = cli.NewCommandContext(pc, commands)
 	cc.AddProvider("BlazegraphClient", getBlazegraphClient)
 	cc.Flags.String("instance", DefaultUrl, "`URL` of Blazegraph instance")
 

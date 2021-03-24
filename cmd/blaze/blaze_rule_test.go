@@ -10,18 +10,18 @@ import (
 func TestBlazegraphCmd_static_macro_in_select(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<:x> <:foo> <:y> .
 		<:y> <:bar> <:z> .
 		<:z> <:baz> "baz" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -37,8 +37,8 @@ func TestBlazegraphCmd_static_macro_in_select(t *testing.T) {
 		{ ?s {{foo}} ?o }
 		ORDER BY ?o
 	`
-	Main.InReader = strings.NewReader(template)
-	assertExitCode(t, "blaze query --format table", 0)
+	Program.InReader = strings.NewReader(template)
+	Program.AssertExitCode(t, "blaze query --format table", 0)
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`s                                                | o
 		 ===================================================================================================
@@ -49,18 +49,18 @@ func TestBlazegraphCmd_static_macro_in_select(t *testing.T) {
 func TestBlazegraphCmd_included_static_macro_in_select(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<:x> <:foo> <:y> .
 		<:y> <:bar> <:z> .
 		<:z> <:baz> "baz" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -74,8 +74,8 @@ func TestBlazegraphCmd_included_static_macro_in_select(t *testing.T) {
 		{ ?s {{foo}} ?o }
 		ORDER BY ?o
 	`
-	Main.InReader = strings.NewReader(template)
-	assertExitCode(t, "blaze query --format table", 0)
+	Program.InReader = strings.NewReader(template)
+	Program.AssertExitCode(t, "blaze query --format table", 0)
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`s                                                | o
 		===================================================================================================
@@ -86,18 +86,18 @@ func TestBlazegraphCmd_included_static_macro_in_select(t *testing.T) {
 func TestBlazegraphCmd_dynamic_macro_in_select(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<:x> <:foo> <:y> .
 		<:y> <:bar> <:z> .
 		<:z> <:baz> "baz" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -113,8 +113,8 @@ func TestBlazegraphCmd_dynamic_macro_in_select(t *testing.T) {
 		{ {{ bar "?s" "?o" }} }
 		ORDER BY ?o
 	`
-	Main.InReader = strings.NewReader(template)
-	assertExitCode(t, "blaze query --format table", 0)
+	Program.InReader = strings.NewReader(template)
+	Program.AssertExitCode(t, "blaze query --format table", 0)
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`s                                                | o
 		===================================================================================================
@@ -125,18 +125,18 @@ func TestBlazegraphCmd_dynamic_macro_in_select(t *testing.T) {
 func TestBlazegraphCmd_included_dynamic_macro_in_select(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<:x> <:foo> <:y> .
 		<:y> <:bar> <:z> .
 		<:z> <:baz> "baz" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -150,8 +150,8 @@ func TestBlazegraphCmd_included_dynamic_macro_in_select(t *testing.T) {
 		{ {{ bar "?s" "?o" }} }
 		ORDER BY ?o
 	`
-	Main.InReader = strings.NewReader(template)
-	assertExitCode(t, "blaze query --format table", 0)
+	Program.InReader = strings.NewReader(template)
+	Program.AssertExitCode(t, "blaze query --format table", 0)
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`s                                                | o
 		===================================================================================================
@@ -162,18 +162,18 @@ func TestBlazegraphCmd_included_dynamic_macro_in_select(t *testing.T) {
 func TestBlazegraphCmd_rule_in_select(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<:x> <:foo> <:y> .
 		<:y> <:bar> <:z> .
 		<:z> <:baz> "baz" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -191,8 +191,8 @@ func TestBlazegraphCmd_rule_in_select(t *testing.T) {
 		{ {{ foo_bar_baz "?s" "?o" }} }
 		ORDER BY ?o
 	`
-	Main.InReader = strings.NewReader(template)
-	assertExitCode(t, "blaze query --format table", 0)
+	Program.InReader = strings.NewReader(template)
+	Program.AssertExitCode(t, "blaze query --format table", 0)
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`o
 		==
@@ -203,18 +203,18 @@ func TestBlazegraphCmd_rule_in_select(t *testing.T) {
 func TestBlazegraphCmd_included_rule_in_select(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<:x> <:foo> <:y> .
 		<:y> <:bar> <:z> .
 		<:z> <:baz> "baz" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -228,8 +228,8 @@ func TestBlazegraphCmd_included_rule_in_select(t *testing.T) {
 		{ {{ foo_bar_baz "?s" "?o" }} }
 		ORDER BY ?o
 	`
-	Main.InReader = strings.NewReader(template)
-	assertExitCode(t, "blaze query --format table", 0)
+	Program.InReader = strings.NewReader(template)
+	Program.AssertExitCode(t, "blaze query --format table", 0)
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`o
 		==
@@ -240,18 +240,18 @@ func TestBlazegraphCmd_included_rule_in_select(t *testing.T) {
 func TestBlazegraphCmd_rule_in_select_in_report(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<:x> <:foo> <:y> .
 		<:y> <:bar> <:z> .
 		<:z> <:baz> "baz" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -270,8 +270,8 @@ func TestBlazegraphCmd_rule_in_select_in_report(t *testing.T) {
 			ORDER BY ?o
 		''' | value }}
 	`
-	Main.InReader = strings.NewReader(template)
-	assertExitCode(t, "blaze report", 0)
+	Program.InReader = strings.NewReader(template)
+	Program.AssertExitCode(t, "blaze report", 0)
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`
 		baz
@@ -281,18 +281,18 @@ func TestBlazegraphCmd_rule_in_select_in_report(t *testing.T) {
 func TestBlazegraphCmd_rule_in_query(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<:x> <:foo> <:y> .
 		<:y> <:bar> <:z> .
 		<:z> <:baz> "baz" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -313,8 +313,8 @@ func TestBlazegraphCmd_rule_in_query(t *testing.T) {
 
 		{{ select_foo_bar_baz ":x" | value }}
 `
-	Main.InReader = strings.NewReader(template)
-	assertExitCode(t, "blaze report", 0)
+	Program.InReader = strings.NewReader(template)
+	Program.AssertExitCode(t, "blaze report", 0)
 	util.LineContentsEqual(t, outputBuffer.String(), `
 		baz
 	`)
@@ -323,18 +323,18 @@ func TestBlazegraphCmd_rule_in_query(t *testing.T) {
 func TestBlazegraphCmd_rule_in_rule(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<:x> <:foo> <:y> .
 		<:y> <:bar> <:z> .
 		<:z> <:baz> "baz" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -359,8 +359,8 @@ func TestBlazegraphCmd_rule_in_rule(t *testing.T) {
 		}}}
 		{{ foo_bar_baz_query ":x" | tabulate }}
 `
-	Main.InReader = strings.NewReader(template)
-	assertExitCode(t, "blaze report", 0)
+	Program.InReader = strings.NewReader(template)
+	Program.AssertExitCode(t, "blaze report", 0)
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`s                                                | o
 	 	 ======================================================
@@ -372,17 +372,17 @@ func TestBlazegraphCmd_rule_in_rule(t *testing.T) {
 func TestBlazegraphCmd_rule_in_query_called_by_macro(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<:y> <:tag> "eight" .
 		<:x> <:tag> "seven" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -413,8 +413,8 @@ func TestBlazegraphCmd_rule_in_query_called_by_macro(t *testing.T) {
 			{{ tabulate_tags_for_subject $Subject }}
 		{{ end }}
 `
-	Main.InReader = strings.NewReader(template)
-	assertExitCode(t, "blaze report", 0)
+	Program.InReader = strings.NewReader(template)
+	Program.AssertExitCode(t, "blaze report", 0)
 	util.LineContentsEqual(t, outputBuffer.String(), `
 		tag
 		====

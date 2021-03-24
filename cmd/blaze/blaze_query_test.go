@@ -10,18 +10,18 @@ import (
 func TestBlazegraphCmd_query_json(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
 		<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 	`)
 
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	query := `
 		prefix ab: <http://tmcphill.net/tags#>
@@ -33,8 +33,8 @@ func TestBlazegraphCmd_query_json(t *testing.T) {
 
 	t.Run("json", func(t *testing.T) {
 		outputBuffer.Reset()
-		Main.InReader = strings.NewReader(query)
-		assertExitCode(t, "blaze query --format json", 0)
+		Program.InReader = strings.NewReader(query)
+		Program.AssertExitCode(t, "blaze query --format json", 0)
 		util.JSONEquals(t, outputBuffer.String(),
 			`{
 			"head": { "vars": ["s", "o"] },
@@ -53,8 +53,8 @@ func TestBlazegraphCmd_query_json(t *testing.T) {
 
 	t.Run("table-with-separators", func(t *testing.T) {
 		outputBuffer.Reset()
-		Main.InReader = strings.NewReader(query)
-		assertExitCode(t, "blaze query --format table", 0)
+		Program.InReader = strings.NewReader(query)
+		Program.AssertExitCode(t, "blaze query --format table", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`s                          | o
  			 ==================================
@@ -65,8 +65,8 @@ func TestBlazegraphCmd_query_json(t *testing.T) {
 
 	t.Run("table-without-separators", func(t *testing.T) {
 		outputBuffer.Reset()
-		Main.InReader = strings.NewReader(query)
-		assertExitCode(t, "blaze query --format table --columnseparators=false", 0)
+		Program.InReader = strings.NewReader(query)
+		Program.AssertExitCode(t, "blaze query --format table --columnseparators=false", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`s                            o
 			 ==================================
@@ -77,8 +77,8 @@ func TestBlazegraphCmd_query_json(t *testing.T) {
 
 	t.Run("xml", func(t *testing.T) {
 		outputBuffer.Reset()
-		Main.InReader = strings.NewReader(query)
-		assertExitCode(t, "blaze query --format xml", 0)
+		Program.InReader = strings.NewReader(query)
+		Program.AssertExitCode(t, "blaze query --format xml", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`<?xml version='1.0' encoding='UTF-8'?>
              <sparql xmlns='http://www.w3.org/2005/sparql-results#'>
@@ -110,8 +110,8 @@ func TestBlazegraphCmd_query_json(t *testing.T) {
 
 	t.Run("csv", func(t *testing.T) {
 		outputBuffer.Reset()
-		Main.InReader = strings.NewReader(query)
-		assertExitCode(t, "blaze query --format csv", 0)
+		Program.InReader = strings.NewReader(query)
+		Program.AssertExitCode(t, "blaze query --format csv", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`s,o
 			 http://tmcphill.net/data#x,seven
@@ -121,8 +121,7 @@ func TestBlazegraphCmd_query_json(t *testing.T) {
 }
 
 var expectedQueryHelpOutput = string(
-	`
-	blaze query: Performs a SPARQL query on the identified RDF dataset.
+	`blaze query: Performs a SPARQL query on the identified RDF dataset.
 
 	usage: blaze query [<flags>]
 
@@ -143,34 +142,33 @@ var expectedQueryHelpOutput = string(
 				Discard normal command output
 		-silent
 				Discard normal and error command output
-
 	`)
 
 func TestBlazegraphCmd_query_help(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	assertExitCode(t, "blaze query help", 0)
+	Program.AssertExitCode(t, "blaze query help", 0)
 	util.LineContentsEqual(t, outputBuffer.String(), expectedQueryHelpOutput)
 }
 
 func TestBlazegraphCmd_help_select(t *testing.T) {
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
-	assertExitCode(t, "blaze help query", 0)
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
+	Program.AssertExitCode(t, "blaze help query", 0)
 	util.LineContentsEqual(t, outputBuffer.String(), expectedQueryHelpOutput)
 }
 
 func TestBlazegraphCmd_query_bad_flag(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	assertExitCode(t, "blaze query --not-a-flag", 1)
+	Program.AssertExitCode(t, "blaze query --not-a-flag", 1)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`blaze query: flag provided but not defined: -not-a-flag
@@ -194,6 +192,5 @@ func TestBlazegraphCmd_query_bad_flag(t *testing.T) {
 					Discard normal command output
 			-silent
 					Discard normal and error command output
-
 	`)
 }

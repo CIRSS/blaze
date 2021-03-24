@@ -10,23 +10,23 @@ import (
 func TestBlazegraphCmd_import_two_triples(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
 	t.Run("import_nt", func(t *testing.T) {
 
-		run("blaze destroy --dataset kb --quiet")
-		run("blaze create --quiet --dataset kb")
+		Program.Invoke("blaze destroy --dataset kb --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb")
 
-		Main.InReader = strings.NewReader(`
+		Program.InReader = strings.NewReader(`
 			<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 			<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
 		`)
 
-		assertExitCode(t, "blaze import --format nt", 0)
+		Program.AssertExitCode(t, "blaze import --format nt", 0)
 
 		outputBuffer.Reset()
-		run("blaze export --format nt --sort=true")
+		Program.Invoke("blaze export --format nt --sort=true")
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 			 <http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
@@ -35,10 +35,10 @@ func TestBlazegraphCmd_import_two_triples(t *testing.T) {
 
 	t.Run("import_ttl", func(t *testing.T) {
 
-		run("blaze destroy --dataset kb --quiet")
-		run("blaze create --quiet --dataset kb")
+		Program.Invoke("blaze destroy --dataset kb --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb")
 
-		Main.InReader = strings.NewReader(
+		Program.InReader = strings.NewReader(
 			`@prefix data: <http://tmcphill.net/data#> .
 			 @prefix tags: <http://tmcphill.net/tags#> .
 
@@ -46,10 +46,10 @@ func TestBlazegraphCmd_import_two_triples(t *testing.T) {
 			 data:x tags:tag "seven" .
 			`)
 
-		assertExitCode(t, "blaze import --format ttl", 0)
+		Program.AssertExitCode(t, "blaze import --format ttl", 0)
 
 		outputBuffer.Reset()
-		run("blaze export --format nt --sort=true")
+		Program.Invoke("blaze export --format nt --sort=true")
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 			 <http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
@@ -58,10 +58,10 @@ func TestBlazegraphCmd_import_two_triples(t *testing.T) {
 
 	t.Run("import_jsonld", func(t *testing.T) {
 
-		run("blaze destroy --dataset kb --quiet")
-		run("blaze create --quiet --dataset kb")
+		Program.Invoke("blaze destroy --dataset kb --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb")
 
-		Main.InReader = strings.NewReader(
+		Program.InReader = strings.NewReader(
 			`
 			[
 				{
@@ -75,10 +75,10 @@ func TestBlazegraphCmd_import_two_triples(t *testing.T) {
 			]
 			`)
 
-		assertExitCode(t, "blaze import --format jsonld", 0)
+		Program.AssertExitCode(t, "blaze import --format jsonld", 0)
 
 		outputBuffer.Reset()
-		run("blaze export --format nt --sort=true")
+		Program.Invoke("blaze export --format nt --sort=true")
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven"^^<http://www.w3.org/2001/XMLSchema#string> .
 			 <http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight"^^<http://www.w3.org/2001/XMLSchema#string> .
@@ -87,10 +87,10 @@ func TestBlazegraphCmd_import_two_triples(t *testing.T) {
 
 	t.Run("import_ttl", func(t *testing.T) {
 
-		run("blaze destroy --dataset kb --quiet")
-		run("blaze create --quiet --dataset kb")
+		Program.Invoke("blaze destroy --dataset kb --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb")
 
-		Main.InReader = strings.NewReader(
+		Program.InReader = strings.NewReader(
 			`@prefix data: <http://tmcphill.net/data#> .
 			 @prefix tags: <http://tmcphill.net/tags#> .
 
@@ -98,10 +98,10 @@ func TestBlazegraphCmd_import_two_triples(t *testing.T) {
 			 data:x tags:tag "seven" .
 			`)
 
-		assertExitCode(t, "blaze import --format ttl", 0)
+		Program.AssertExitCode(t, "blaze import --format ttl", 0)
 
 		outputBuffer.Reset()
-		run("blaze export --format nt --sort=true")
+		Program.Invoke("blaze export --format nt --sort=true")
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 			 <http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
@@ -110,10 +110,10 @@ func TestBlazegraphCmd_import_two_triples(t *testing.T) {
 
 	t.Run("import_xml", func(t *testing.T) {
 
-		run("blaze destroy --dataset kb --quiet")
-		run("blaze create --quiet --dataset kb")
+		Program.Invoke("blaze destroy --dataset kb --quiet")
+		Program.Invoke("blaze create --quiet --dataset kb")
 
-		Main.InReader = strings.NewReader(
+		Program.InReader = strings.NewReader(
 			`<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
 
 			 <rdf:Description rdf:about="http://tmcphill.net/data#y">
@@ -127,10 +127,10 @@ func TestBlazegraphCmd_import_two_triples(t *testing.T) {
 			 </rdf:RDF>
 			`)
 
-		assertExitCode(t, "blaze import --format xml", 0)
+		Program.AssertExitCode(t, "blaze import --format xml", 0)
 
 		outputBuffer.Reset()
-		run("blaze export --format nt --sort=true")
+		Program.Invoke("blaze export --format nt --sort=true")
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 			 <http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
@@ -145,34 +145,33 @@ func TestBlazegraphCmd_import_specific_dataset(t *testing.T) {
 		 <http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
 		`
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
 	// t.Run("default", func(t *testing.T) {
 	// 	outputBuffer.Reset()
-	// 	run("blaze destroy --silent")
-	// 	run("blaze create --quiet")
-	// 	Main.InReader = strings.NewReader(triples_ttl)
-	// 	assertExitCode(t, "blaze import", 0)
-	// 	run("blaze export --sort=true")
+	// 	Program.Invoke("blaze destroy --silent")
+	// 	Program.Invoke("blaze create --quiet")
+	// 	Program.InReader = strings.NewReader(triples_ttl)
+	// 	Program.AssertExitCode(t, "blaze import", 0)
+	// 	Program.Invoke("blaze export --sort=true")
 	// 	util.LineContentsEqual(t, outputBuffer.String(), triples_ttl)
 	// })
 
 	t.Run("single_custom", func(t *testing.T) {
 		outputBuffer.Reset()
-		run("blaze destroy --dataset foo --silent")
-		run("blaze create --dataset foo --quiet")
-		Main.InReader = strings.NewReader(triples_ttl)
-		assertExitCode(t, "blaze import --dataset foo", 0)
-		run("blaze export --dataset foo --sort=true")
+		Program.Invoke("blaze destroy --dataset foo --silent")
+		Program.Invoke("blaze create --dataset foo --quiet")
+		Program.InReader = strings.NewReader(triples_ttl)
+		Program.AssertExitCode(t, "blaze import --dataset foo", 0)
+		Program.Invoke("blaze export --dataset foo --sort=true")
 		util.LineContentsEqual(t, outputBuffer.String(), triples_ttl)
 	})
 
 }
 
 var expectedImportHelpOutput = string(
-	`
-	blaze import: Imports triples in the specified format into an RDF dataset.
+	`blaze import: Imports triples in the specified format into an RDF dataset.
 
 	usage: blaze import [<flags>]
 
@@ -189,32 +188,31 @@ var expectedImportHelpOutput = string(
 				Discard normal command output
 		-silent
 				Discard normal and error command output
-
 	`)
 
 func TestBlazegraphCmd_import_help(t *testing.T) {
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
-	assertExitCode(t, "blaze import help", 0)
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
+	Program.AssertExitCode(t, "blaze import help", 0)
 	util.LineContentsEqual(t, outputBuffer.String(), expectedImportHelpOutput)
 }
 
 func TestBlazegraphCmd_help_import(t *testing.T) {
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
-	assertExitCode(t, "blaze help import", 0)
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
+	Program.AssertExitCode(t, "blaze help import", 0)
 	util.LineContentsEqual(t, outputBuffer.String(), expectedImportHelpOutput)
 }
 
 func TestBlazegraphCmd_import_bad_flag(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	assertExitCode(t, "blaze import --not-a-flag", 1)
+	Program.AssertExitCode(t, "blaze import --not-a-flag", 1)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`blaze import: flag provided but not defined: -not-a-flag
@@ -234,6 +232,5 @@ func TestBlazegraphCmd_import_bad_flag(t *testing.T) {
 					Discard normal command output
 			-silent
 					Discard normal and error command output
-
 	`)
 }

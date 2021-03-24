@@ -10,14 +10,14 @@ import (
 func TestBlazegraphCmd_report_static_content(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
 	t.Run("constant-template", func(t *testing.T) {
 		outputBuffer.Reset()
 		template := `A constant template.`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`A constant template.`)
 	})
@@ -25,8 +25,8 @@ func TestBlazegraphCmd_report_static_content(t *testing.T) {
 	t.Run("constant-template-containing-unquoted-percent-symbol", func(t *testing.T) {
 		outputBuffer.Reset()
 		template := `A constant template with % symbol`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`A constant template with % symbol`)
 	})
@@ -36,8 +36,8 @@ func TestBlazegraphCmd_report_static_content(t *testing.T) {
 		template := `
 			"A constant template"
 		`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
 			 "A constant template"
@@ -49,8 +49,8 @@ func TestBlazegraphCmd_report_static_content(t *testing.T) {
 		template := `
 			"A constant template with % symbol"
 		`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
 			 "A constant template with % symbol"
@@ -62,8 +62,8 @@ func TestBlazegraphCmd_report_static_content(t *testing.T) {
 		template := `
 			{{up "A constant template"}}
 		`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
 			 A CONSTANT TEMPLATE
@@ -75,8 +75,8 @@ func TestBlazegraphCmd_report_static_content(t *testing.T) {
 		template := `
 			{{up '''A constant template'''}}
 		`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
 			 A CONSTANT TEMPLATE
@@ -88,8 +88,8 @@ func TestBlazegraphCmd_report_static_content(t *testing.T) {
 		template := `
 			{{up '''A 'constant' template'''}}
 		`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
 			 A 'CONSTANT' TEMPLATE
@@ -102,8 +102,8 @@ func TestBlazegraphCmd_report_static_content(t *testing.T) {
 			{{up '''A constant
 				template'''}}
 		`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
 			 A CONSTANT
@@ -117,8 +117,8 @@ func TestBlazegraphCmd_report_static_content(t *testing.T) {
 			{{up '''A "constant"
 				template'''}}
 		`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
 			 A "CONSTANT"
@@ -130,17 +130,17 @@ func TestBlazegraphCmd_report_static_content(t *testing.T) {
 func TestBlazegraphCmd_report_two_triples(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
 		<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	t.Run("select-piped-to-tabulate", func(t *testing.T) {
 		outputBuffer.Reset()
@@ -155,8 +155,8 @@ func TestBlazegraphCmd_report_two_triples(t *testing.T) {
 					ORDER BY ?s
 				''' | tabulate}}
 		`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
 			 Example select query with tabular output in report
@@ -182,8 +182,8 @@ func TestBlazegraphCmd_report_two_triples(t *testing.T) {
 						ORDER BY ?s
 					''')}}{{ tabulate $tags}}{{end}}
 			`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
 			 Example select query with tabular output in report
@@ -209,8 +209,8 @@ func TestBlazegraphCmd_report_two_triples(t *testing.T) {
 						ORDER BY ?s
 					''')}} {{tabulate .}} {{end}}
 			`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
 			 Example select query with tabular output in report
@@ -244,8 +244,8 @@ func TestBlazegraphCmd_report_two_triples(t *testing.T) {
 
 				{{end}}
 			`
-		Main.InReader = strings.NewReader(template)
-		assertExitCode(t, "blaze report", 0)
+		Program.InReader = strings.NewReader(template)
+		Program.AssertExitCode(t, "blaze report", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
 			 Example select query with tabular output in report
@@ -267,17 +267,17 @@ func TestBlazegraphCmd_report_two_triples(t *testing.T) {
 func TestBlazegraphCmd_report_multiple_queries(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
 		<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template :=
@@ -306,9 +306,9 @@ func TestBlazegraphCmd_report_multiple_queries(t *testing.T) {
 			{{end}}										\
 		{{end }}`
 
-	Main.InReader = strings.NewReader(template)
+	Program.InReader = strings.NewReader(template)
 
-	assertExitCode(t, "blaze report", 0)
+	Program.AssertExitCode(t, "blaze report", 0)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`o
@@ -325,17 +325,17 @@ func TestBlazegraphCmd_report_multiple_queries(t *testing.T) {
 func TestBlazegraphCmd_report_macros(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
 		<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template :=
@@ -361,9 +361,9 @@ func TestBlazegraphCmd_report_macros(t *testing.T) {
 			{{end}}										\
 		{{end}}											\
 	`
-	Main.InReader = strings.NewReader(template)
+	Program.InReader = strings.NewReader(template)
 
-	assertExitCode(t, "blaze report", 0)
+	Program.AssertExitCode(t, "blaze report", 0)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`o
@@ -380,17 +380,17 @@ func TestBlazegraphCmd_report_macros(t *testing.T) {
 func TestBlazegraphCmd_report_subqueries(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
 		<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -415,9 +415,9 @@ func TestBlazegraphCmd_report_subqueries(t *testing.T) {
 			{{ Q2 . | tabulate }}
 		{{ end }}												\
 	`
-	Main.InReader = strings.NewReader(template)
+	Program.InReader = strings.NewReader(template)
 
-	assertExitCode(t, "blaze report", 0)
+	Program.AssertExitCode(t, "blaze report", 0)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`o
@@ -434,13 +434,13 @@ func TestBlazegraphCmd_report_subqueries(t *testing.T) {
 func TestBlazegraphCmd_report_address_book(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	run("blaze import --format jsonld --file testdata/address-book.jsonld")
+	Program.Invoke("blaze import --format jsonld --file testdata/address-book.jsonld")
 
 	t.Run("constant-template", func(t *testing.T) {
 		outputBuffer.Reset()
@@ -459,9 +459,9 @@ func TestBlazegraphCmd_report_address_book(t *testing.T) {
 				{{ . }}
 			{{end}}																				\
 		`
-		Main.InReader = strings.NewReader(template)
+		Program.InReader = strings.NewReader(template)
 
-		assertExitCode(t, "blaze report", 0)
+		Program.AssertExitCode(t, "blaze report", 0)
 
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
@@ -476,12 +476,12 @@ func TestBlazegraphCmd_report_address_book(t *testing.T) {
 func TestBlazegraphCmd_report_address_book_imports(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
-	run("blaze import --format jsonld --file testdata/address-book.jsonld")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze import --format jsonld --file testdata/address-book.jsonld")
 
 	t.Run("constant-template", func(t *testing.T) {
 		outputBuffer.Reset()
@@ -499,9 +499,9 @@ func TestBlazegraphCmd_report_address_book_imports(t *testing.T) {
 				{{ $Name }}
 			{{end}}															\
 		`
-		Main.InReader = strings.NewReader(template)
+		Program.InReader = strings.NewReader(template)
 
-		assertExitCode(t, "blaze report", 0)
+		Program.AssertExitCode(t, "blaze report", 0)
 
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`
@@ -516,17 +516,17 @@ func TestBlazegraphCmd_report_address_book_imports(t *testing.T) {
 func TestBlazegraphCmd_report_subquery_functions(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
 		<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -552,9 +552,9 @@ func TestBlazegraphCmd_report_subquery_functions(t *testing.T) {
 			{{ Q2 . | tabulate }}
 		{{ end }}											\
 	`
-	Main.InReader = strings.NewReader(template)
+	Program.InReader = strings.NewReader(template)
 
-	assertExitCode(t, "blaze report", 0)
+	Program.AssertExitCode(t, "blaze report", 0)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`
@@ -572,17 +572,17 @@ func TestBlazegraphCmd_report_subquery_functions(t *testing.T) {
 func TestBlazegraphCmd_report_macro_functions(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
 		<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -612,9 +612,9 @@ func TestBlazegraphCmd_report_macro_functions(t *testing.T) {
 			{{end}}											\\
 		{{end}}												\\
 `
-	Main.InReader = strings.NewReader(template)
+	Program.InReader = strings.NewReader(template)
 
-	assertExitCode(t, "blaze report", 0)
+	Program.AssertExitCode(t, "blaze report", 0)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`o
@@ -631,17 +631,17 @@ func TestBlazegraphCmd_report_macro_functions(t *testing.T) {
 func TestBlazegraphCmd_report_macro_calls_query(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	run("blaze destroy --dataset kb --quiet")
-	run("blaze create --quiet --dataset kb")
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb")
 
-	Main.InReader = strings.NewReader(`
+	Program.InReader = strings.NewReader(`
 		<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
 		<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
 	`)
-	run("blaze import --format ttl")
+	Program.Invoke("blaze import --format ttl")
 
 	outputBuffer.Reset()
 	template := `
@@ -671,9 +671,9 @@ func TestBlazegraphCmd_report_macro_calls_query(t *testing.T) {
 
 		{{end}}														\
 `
-	Main.InReader = strings.NewReader(template)
+	Program.InReader = strings.NewReader(template)
 
-	assertExitCode(t, "blaze report", 0)
+	Program.AssertExitCode(t, "blaze report", 0)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`tag
@@ -688,8 +688,7 @@ func TestBlazegraphCmd_report_macro_calls_query(t *testing.T) {
 }
 
 var expectedReportHelpOutput = string(
-	`
-	blaze report: Expands the provided report template using the identified RDF dataset.
+	`blaze report: Expands the provided report template using the identified RDF dataset.
 
 	usage: blaze report [<flags>]
 
@@ -704,32 +703,31 @@ var expectedReportHelpOutput = string(
 				Discard normal command output
 		-silent
 				Discard normal and error command output
-
 	`)
 
 func TestBlazegraphCmd_report_help(t *testing.T) {
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
-	assertExitCode(t, "blaze report help", 0)
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
+	Program.AssertExitCode(t, "blaze report help", 0)
 	util.LineContentsEqual(t, outputBuffer.String(), expectedReportHelpOutput)
 }
 
 func TestBlazegraphCmd_help_report(t *testing.T) {
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
-	assertExitCode(t, "blaze help report", 0)
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
+	Program.AssertExitCode(t, "blaze help report", 0)
 	util.LineContentsEqual(t, outputBuffer.String(), expectedReportHelpOutput)
 }
 
 func TestBlazegraphCmd_report_bad_flag(t *testing.T) {
 
 	var outputBuffer strings.Builder
-	Main.OutWriter = &outputBuffer
-	Main.ErrWriter = &outputBuffer
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
 
-	assertExitCode(t, "blaze report --not-a-flag", 1)
+	Program.AssertExitCode(t, "blaze report --not-a-flag", 1)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
 		`blaze report: flag provided but not defined: -not-a-flag
@@ -747,6 +745,5 @@ func TestBlazegraphCmd_report_bad_flag(t *testing.T) {
 					Discard normal command output
 			-silent
 					Discard normal and error command output
-
 	`)
 }
