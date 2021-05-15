@@ -12,6 +12,7 @@ func Report(cc *cli.CommandContext) (err error) {
 	// declare command flags
 	dataset := cc.Flags.String("dataset", "kb", "`name` of RDF dataset to create report from")
 	file := cc.Flags.String("file", "-", "File containing report template to expand")
+	includeinferred := cc.Flags.Bool("includeinferred", true, "Include inferred triples in result set")
 
 	// parse flags
 	var helped bool
@@ -21,6 +22,7 @@ func Report(cc *cli.CommandContext) (err error) {
 
 	bc := cc.Resource("BlazegraphClient").(*BlazegraphClient)
 	bc.SetDataset(*dataset)
+	bc.IncludeInferred = *includeinferred
 
 	reportTemplate, err := cc.ReadFileOrStdin(*file)
 	if err != nil {

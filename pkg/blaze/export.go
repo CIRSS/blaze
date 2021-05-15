@@ -12,6 +12,7 @@ func Export(cc *cli.CommandContext) (err error) {
 	dataset := cc.Flags.String("dataset", "kb", "`name` of RDF dataset to export")
 	format := cc.Flags.String("format", "nt", "Format for exported triples [jsonld, nt, ttl, or xml]")
 	sort := cc.Flags.Bool("sort", false, "Sort the exported triples if true")
+	includeinferred := cc.Flags.Bool("includeinferred", true, "Include inferred triples in result set")
 
 	// parse flags
 	var helped bool
@@ -21,6 +22,7 @@ func Export(cc *cli.CommandContext) (err error) {
 
 	bc := cc.Resource("BlazegraphClient").(*BlazegraphClient)
 	bc.SetDataset(*dataset)
+	bc.IncludeInferred = *includeinferred
 
 	var triples string
 

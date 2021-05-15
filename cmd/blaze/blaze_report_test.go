@@ -697,6 +697,8 @@ var expectedReportHelpOutput = string(
 				name of RDF dataset to create report from (default "kb")
 		-file string
 				File containing report template to expand (default "-")
+		-includeinferred
+			Include inferred triples in result set (default true)
 		-instance URL
 				URL of Blazegraph instance (default "http://127.0.0.1:9999/blazegraph")
 		-quiet
@@ -739,8 +741,10 @@ func TestBlazegraphCmd_report_bad_flag(t *testing.T) {
 					name of RDF dataset to create report from (default "kb")
 			-file string
 					File containing report template to expand (default "-")
+			-includeinferred
+				Include inferred triples in result set (default true)
 			-instance URL
-					URL of Blazegraph instance (default "http://127.0.0.1:9999/blazegraph")
+				URL of Blazegraph instance (default "http://127.0.0.1:9999/blazegraph")
 			-quiet
 					Discard normal command output
 			-silent

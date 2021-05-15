@@ -15,6 +15,7 @@ func Query(cc *cli.CommandContext) (err error) {
 	file := cc.Flags.String("file", "-", "File containing the SPARQL query to execute")
 	format := cc.Flags.String("format", "json", "Format of result set to produce [csv, json, table, or xml]")
 	separators := cc.Flags.Bool("columnseparators", true, "Display column separators in table format")
+	includeinferred := cc.Flags.Bool("includeinferred", true, "Include inferred triples in result set")
 
 	// parse flags
 	var helped bool
@@ -24,6 +25,7 @@ func Query(cc *cli.CommandContext) (err error) {
 
 	bc := cc.Resource("BlazegraphClient").(*BlazegraphClient)
 	bc.SetDataset(*dataset)
+	bc.IncludeInferred = *includeinferred
 
 	queryText, err := cc.ReadFileOrStdin(*file)
 	if err != nil {

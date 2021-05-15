@@ -30,6 +30,7 @@ type BlazegraphClient struct {
 	geist.SparqlClient
 	NamespaceEndpoint string
 	Url               string
+	IncludeInferred   bool
 }
 
 func NewBlazegraphClient(instanceUrl string) *BlazegraphClient {
@@ -42,7 +43,7 @@ func NewBlazegraphClient(instanceUrl string) *BlazegraphClient {
 }
 
 func (bc *BlazegraphClient) SetDataset(dataset string) {
-	bc.SparqlEndpoint = bc.SparqlEndpointForDataset(dataset)
+	bc.Endpoint = bc.SparqlEndpointForDataset(dataset)
 }
 
 func (bc *BlazegraphClient) SparqlEndpointForDataset(dataset string) string {
@@ -110,6 +111,12 @@ func (bc *BlazegraphClient) selectFunc(rp *geist.Template, queryText string, arg
 	if re != nil {
 		return
 	}
+
+	if bc.IncludeInferred {
+		bc.Parameters = "?includeInferred=true"
+	} else {
+		bc.Parameters = "?includeInferred=false"
+	}
 	return bc.Select(query)
 }
 
@@ -173,7 +180,7 @@ func (bc *BlazegraphClient) GetStatus() (statusJSON string, err error) {
 	statusString := string(responseBody)
 	status := InstanceStatus{}
 	status.InstanceUrl = bc.Url
-	status.SparqlEndpoint = bc.SparqlEndpoint
+	status.SparqlEndpoint = bc.Endpoint
 	status.BlazegraphBuildVersion = ExtractStringUsingRegEx(statusString, `span id="buildVersion">([0-9\.]+)</span`)
 	status.QueryStartCount, _ = ExtractIntUsingRegEx(statusString, `queryStartCount=([0-9]+)`)
 	status.RunningQueriesCount, _ = ExtractIntUsingRegEx(statusString, `runningQueriesCount=([0-9]+)`)
