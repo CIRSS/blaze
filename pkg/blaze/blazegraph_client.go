@@ -100,6 +100,15 @@ func (bc *BlazegraphClient) DestroyDataSet(name string) (response string, err er
 	return
 }
 
+func (bc *BlazegraphClient) Select(query string) (rs *geist.ResultSet, err error) {
+	if bc.IncludeInferred {
+		bc.Parameters = "?includeInferred=true"
+	} else {
+		bc.Parameters = "?includeInferred=false"
+	}
+	return bc.SparqlClient.Select(query)
+}
+
 func (bc *BlazegraphClient) selectFunc(rp *geist.Template, queryText string, args []interface{}) (rs interface{}, err error) {
 
 	var data interface{}
@@ -112,11 +121,6 @@ func (bc *BlazegraphClient) selectFunc(rp *geist.Template, queryText string, arg
 		return
 	}
 
-	if bc.IncludeInferred {
-		bc.Parameters = "?includeInferred=true"
-	} else {
-		bc.Parameters = "?includeInferred=false"
-	}
 	return bc.Select(query)
 }
 
@@ -135,6 +139,40 @@ func (bc *BlazegraphClient) ExpandReport(rp *geist.Template) (report string, err
 	rp.AddFuncs(funcs)
 	rp.Parse()
 	report, err = rp.Expand(nil)
+
+	return
+}
+
+func (bc *BlazegraphClient) Construct(format string, query string) (triples []byte, err error) {
+	if bc.IncludeInferred {
+		bc.Parameters = "?includeInferred=true"
+	} else {
+		bc.Parameters = "?includeInferred=false"
+	}
+	return bc.SparqlClient.Construct(format, query)
+}
+
+func (bc *BlazegraphClient) ConstructAll(format string, sorted bool) (triples string, err error) {
+
+	responseBody, err := bc.Construct(format, `
+		CONSTRUCT
+		{ ?s ?p ?o }
+		WHERE
+		{ ?s ?p ?o }`,
+	)
+	if err != nil {
+		return
+	}
+
+	triples = string(responseBody)
+
+	if sorted && format == "text/plain" {
+		ntriplesSlice := strings.Split(strings.Trim(triples, "\n"), "\n")
+		sort.Strings(ntriplesSlice)
+		triples = strings.Join(ntriplesSlice, "\n")
+	}
+
+	triples = strings.Trim(triples, " \n")
 
 	return
 }
