@@ -4,6 +4,7 @@ type DatasetProperties struct {
 	Name      string
 	Inference string
 	Quads     bool
+	RDFStar   bool
 }
 
 func NewDatasetProperties(name string) *DatasetProperties {
@@ -33,6 +34,10 @@ func (dp *DatasetProperties) String() string {
 		s += "com.bigdata.rdf.store.AbstractTripleStore.quads=true\n"
 	} else {
 		s += "com.bigdata.rdf.store.AbstractTripleStore.quads=false\n"
+	}
+
+	if dp.RDFStar {
+		s += "com.bigdata.rdf.store.AbstractTripleStore.statementIdentifiers = true\n"
 	}
 
 	return s

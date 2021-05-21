@@ -12,6 +12,7 @@ func Create(cc *cli.CommandContext) (err error) {
 	// declare command flags
 	dataset := cc.Flags.String("dataset", "kb", "`name` of RDF dataset to create")
 	infer := cc.Flags.String("infer", "none", "Inference to perform on update [none, rdfs, owl]")
+	rdfstar := cc.Flags.Bool("rdfstar", false, "Enable RDF* and SPARQL* syntaxes for reification")
 
 	// parse flags
 	var helped bool
@@ -27,6 +28,7 @@ func Create(cc *cli.CommandContext) (err error) {
 
 	p := NewDatasetProperties(*dataset)
 	p.Inference = *infer
+	p.RDFStar = *rdfstar
 
 	bc := cc.Resource("BlazegraphClient").(*BlazegraphClient)
 
