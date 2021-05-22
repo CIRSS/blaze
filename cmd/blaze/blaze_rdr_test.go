@@ -20,9 +20,10 @@ func TestBlazegraphCmd_query_rdfstar(t *testing.T) {
 		@prefix : <http://bigdata.com/> .
 		@prefix foaf: <http://xmlns.com/foaf/0.1/> .
 		@prefix dct:  <http://purl.org/dc/elements/1.1/> .
+
 		:bob foaf:name "Bob" .
-		<<:bob foaf:age 23>> dct:creator <http://example.com/crawlers#c2> .
-		<<:bob foaf:age 23>> dct:source <http://example.com/crawlers#c2> .
+		<<:bob foaf:age 23>> dct:creator <http://example.com/crawlers#c1> ;
+							 dct:source <http://example.net/homepage-listing.html> .
 	`)
 
 	Program.AssertExitCode(t, "blaze import --format ttlx --dataset rdr", 0)
@@ -32,9 +33,9 @@ func TestBlazegraphCmd_query_rdfstar(t *testing.T) {
 		PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 		PREFIX dct:  <http://purl.org/dc/elements/1.1/>
 		
-		SELECT ?src ?s ?age ?p ?pp WHERE {
-		?bob foaf:name "Bob" .
-		<<?s ?p ?age>> ?pp ?src .
+		SELECT ?age ?src WHERE {
+			?bob foaf:name "Bob" .
+			<<?bob foaf:age ?age>> dct:source ?src .
 		}
 	`
 
@@ -43,9 +44,8 @@ func TestBlazegraphCmd_query_rdfstar(t *testing.T) {
 	Program.AssertExitCode(t, "blaze query --format table --dataset rdr", 0)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
-		`src                            | s                      | age | p                             | pp
-        =========================================================================================================================================
-        http://example.com/crawlers#c2 | http://bigdata.com/bob | 23  | http://xmlns.com/foaf/0.1/age | http://purl.org/dc/elements/1.1/creator
-        http://example.com/crawlers#c2 | http://bigdata.com/bob | 23  | http://xmlns.com/foaf/0.1/age | http://purl.org/dc/elements/1.1/source
+		`age | src
+        =============================================
+        23  | http://example.net/homepage-listing.html
 		`)
 }
