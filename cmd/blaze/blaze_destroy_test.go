@@ -131,8 +131,8 @@ func TestBlazegraphCmd_destroy_one_of_several_datasets(t *testing.T) {
 	outputBuffer.Reset()
 	Program.Invoke("blaze list")
 	util.LineContentsEqual(t, outputBuffer.String(),
-		`baz
-		 foo
+		`baz        0
+		 foo        0
 		`)
 }
 

@@ -29,9 +29,17 @@ func TestBlazegraphCmd_list_default_dataset(t *testing.T) {
 	Program.Invoke("blaze destroy --all --quiet")
 	Program.Invoke("blaze create --quiet")
 
-	t.Run("no count", func(t *testing.T) {
+	t.Run("default count", func(t *testing.T) {
 		outputBuffer.Reset()
 		Program.AssertExitCode(t, "blaze list", 0)
+		util.LineContentsEqual(t, outputBuffer.String(),
+			`kb         0
+			`)
+	})
+
+	t.Run("no count", func(t *testing.T) {
+		outputBuffer.Reset()
+		Program.AssertExitCode(t, "blaze list --count none", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
 			`kb
 			`)
@@ -66,7 +74,7 @@ func TestBlazegraphCmd_list_custom_dataset(t *testing.T) {
 	Program.AssertExitCode(t, "blaze list", 0)
 
 	util.LineContentsEqual(t, outputBuffer.String(),
-		`foo
+		`foo        0
 		`)
 }
 
@@ -81,14 +89,14 @@ func TestBlazegraphCmd_list_custom_datasets(t *testing.T) {
 	Program.Invoke("blaze create --quiet --dataset bar")
 	Program.Invoke("blaze create --quiet --dataset baz")
 
-	t.Run("no count", func(t *testing.T) {
+	t.Run("default count", func(t *testing.T) {
 		outputBuffer.Reset()
 		Program.AssertExitCode(t, "blaze list", 0)
 		util.LineContentsEqual(t, outputBuffer.String(),
-			`bar
-			 baz
-			 foo
-			`)
+			`bar        0
+			baz        0
+			foo        0
+	   `)
 	})
 
 	t.Run("exact count", func(t *testing.T) {
@@ -119,7 +127,7 @@ var expectedListHelpOutput = string(
 
 	flags:
 		-count string
-				Include count of triples in each dataset [none, estimate, exact] (default "none")
+				Include count of triples in each dataset [none, estimate, exact] (default "exact")
 		-instance URL
 				URL of Blazegraph instance (default "http://127.0.0.1:9999/blazegraph")
 		-quiet
@@ -159,7 +167,7 @@ func TestBlazegraphCmd_list_bad_flag(t *testing.T) {
 
 		flags:
 			-count string
-					Include count of triples in each dataset [none, estimate, exact] (default "none")
+					Include count of triples in each dataset [none, estimate, exact] (default "exact")
 			-instance URL
 					URL of Blazegraph instance (default "http://127.0.0.1:9999/blazegraph")
 			-quiet

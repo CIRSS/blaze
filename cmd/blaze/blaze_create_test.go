@@ -23,7 +23,7 @@ func TestBlazegraphCmd_create_default_dataset(t *testing.T) {
 	outputBuffer.Reset()
 	Program.AssertExitCode(t, "blaze list", 0)
 	util.LineContentsEqual(t, outputBuffer.String(),
-		`kb
+		`kb         0
 		`)
 }
 
@@ -42,7 +42,7 @@ func TestBlazegraphCmd_create_dataset_quiet(t *testing.T) {
 	outputBuffer.Reset()
 	Program.AssertExitCode(t, "blaze list", 0)
 	util.LineContentsEqual(t, outputBuffer.String(),
-		`kb
+		`kb         0
 		`)
 }
 
@@ -77,7 +77,7 @@ func TestBlazegraphCmd_create_custom_dataset(t *testing.T) {
 	outputBuffer.Reset()
 	Program.AssertExitCode(t, "blaze list", 0)
 	util.LineContentsEqual(t, outputBuffer.String(),
-		`foo
+		`foo        0
 		`)
 }
 

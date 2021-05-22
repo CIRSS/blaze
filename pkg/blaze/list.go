@@ -9,7 +9,7 @@ import (
 func List(cc *cli.CommandContext) (err error) {
 
 	// declare command flags
-	count := cc.Flags.String("count", "none", "Include count of triples in each dataset [none, estimate, exact]")
+	count := cc.Flags.String("count", "exact", "Include count of triples in each dataset [none, estimate, exact]")
 
 	// parse flags
 	var helped bool
