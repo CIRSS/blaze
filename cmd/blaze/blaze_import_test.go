@@ -138,6 +138,60 @@ func TestBlazegraphCmd_import_two_triples(t *testing.T) {
 	})
 }
 
+func TestBlazegraphCmd_import_rdfstar_two_rdf_triples(t *testing.T) {
+
+	var outputBuffer strings.Builder
+	Program.OutWriter = &outputBuffer
+	Program.ErrWriter = &outputBuffer
+
+	Program.Invoke("blaze destroy --dataset kb --quiet")
+	Program.Invoke("blaze create --quiet --dataset kb --rdfstar")
+
+	Program.InReader = strings.NewReader(`
+		<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
+		<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
+	`)
+
+	Program.AssertExitCode(t, "blaze import --format nt", 0)
+
+	outputBuffer.Reset()
+	Program.Invoke("blaze export --format nt --sort=true")
+	util.LineContentsEqual(t, outputBuffer.String(),
+		`<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
+			<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
+		`)
+}
+
+//http://127.0.0.1:9999/blazegraph/namespace/kb/sparql
+
+// func TestBlazegraphCmd_import_rdfstar_import_reified_triple(t *testing.T) {
+
+// 	var outputBuffer strings.Builder
+// 	Program.OutWriter = &outputBuffer
+// 	Program.ErrWriter = &outputBuffer
+
+// 	Program.Invoke("blaze destroy --dataset kb --quiet")
+// 	Program.Invoke("blaze create --quiet --dataset kb --rdfstar")
+
+// 	Program.InReader = strings.NewReader(`
+// 		@prefix : <http://bigdata.com/> .
+// 		@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+// 		@prefix dct:  <http://purl.org/dc/elements/1.1/> .
+// 		:bob foaf:name "Bob" .
+// 		<<:bob foaf:age 23>> dct:creator <http://example.com/crawlers#c1> .
+
+// 	`)
+
+// 	Program.AssertExitCode(t, "blaze import --format ttlx", 0)
+
+// 	outputBuffer.Reset()
+// 	Program.AssertExitCode(t, "blaze export --format json", 0)
+// 	util.LineContentsEqual(t, outputBuffer.String(),
+// 		`<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
+// 			<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
+// 		`)
+// }
+
 func TestBlazegraphCmd_import_specific_dataset(t *testing.T) {
 
 	triples_ttl :=
@@ -181,7 +235,7 @@ var expectedImportHelpOutput = string(
 		-file string
 				File containing triples to import (default "-")
 		-format string
-				Format of triples to import [jsonld, nt, ttl, or xml] (default "ttl")
+				Format of triples to import [jsonld, nt, ttl, ttlx, or xml] (default "ttl")
 		-instance URL
 				URL of Blazegraph instance (default "http://127.0.0.1:9999/blazegraph")
 		-quiet
@@ -225,7 +279,7 @@ func TestBlazegraphCmd_import_bad_flag(t *testing.T) {
 			-file string
 					File containing triples to import (default "-")
 			-format string
-					Format of triples to import [jsonld, nt, ttl, or xml] (default "ttl")
+					Format of triples to import [jsonld, nt, ttl, ttlx, or xml] (default "ttl")
 			-instance URL
 					URL of Blazegraph instance (default "http://127.0.0.1:9999/blazegraph")
 			-quiet

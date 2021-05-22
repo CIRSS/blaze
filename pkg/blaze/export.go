@@ -27,6 +27,8 @@ func Export(cc *cli.CommandContext) (err error) {
 	var triples string
 
 	switch *format {
+	// case "json":
+	// 	triples, err = bc.ConstructAll("application/json", *sort)
 	case "jsonld":
 		triples, err = bc.ConstructAll("application/ld+json", *sort)
 	case "nt":

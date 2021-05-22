@@ -11,7 +11,7 @@ func Import(cc *cli.CommandContext) (err error) {
 	// declare command flags
 	dataset := cc.Flags.String("dataset", "kb", "`name` of RDF dataset to import triples into")
 	file := cc.Flags.String("file", "-", "File containing triples to import")
-	format := cc.Flags.String("format", "ttl", "Format of triples to import [jsonld, nt, ttl, or xml]")
+	format := cc.Flags.String("format", "ttl", "Format of triples to import [jsonld, nt, ttl, ttlx, or xml]")
 
 	// parse flags
 	var helped bool
@@ -38,6 +38,9 @@ func Import(cc *cli.CommandContext) (err error) {
 
 	case "ttl":
 		_, err = bc.PostData("application/x-turtle", data)
+
+	case "ttlx":
+		_, err = bc.PostData("application/x-turtle-RDR", data)
 
 	case "xml":
 		_, err = bc.PostData("application/rdf+xml", data)
