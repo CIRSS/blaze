@@ -162,36 +162,6 @@ func TestBlazegraphCmd_import_rdfstar_two_rdf_triples(t *testing.T) {
 		`)
 }
 
-//http://127.0.0.1:9999/blazegraph/namespace/kb/sparql
-
-// func TestBlazegraphCmd_import_rdfstar_import_reified_triple(t *testing.T) {
-
-// 	var outputBuffer strings.Builder
-// 	Program.OutWriter = &outputBuffer
-// 	Program.ErrWriter = &outputBuffer
-
-// 	Program.Invoke("blaze destroy --dataset kb --quiet")
-// 	Program.Invoke("blaze create --quiet --dataset kb --rdfstar")
-
-// 	Program.InReader = strings.NewReader(`
-// 		@prefix : <http://bigdata.com/> .
-// 		@prefix foaf: <http://xmlns.com/foaf/0.1/> .
-// 		@prefix dct:  <http://purl.org/dc/elements/1.1/> .
-// 		:bob foaf:name "Bob" .
-// 		<<:bob foaf:age 23>> dct:creator <http://example.com/crawlers#c1> .
-
-// 	`)
-
-// 	Program.AssertExitCode(t, "blaze import --format ttlx", 0)
-
-// 	outputBuffer.Reset()
-// 	Program.AssertExitCode(t, "blaze export --format json", 0)
-// 	util.LineContentsEqual(t, outputBuffer.String(),
-// 		`<http://tmcphill.net/data#x> <http://tmcphill.net/tags#tag> "seven" .
-// 			<http://tmcphill.net/data#y> <http://tmcphill.net/tags#tag> "eight" .
-// 		`)
-// }
-
 func TestBlazegraphCmd_import_specific_dataset(t *testing.T) {
 
 	triples_ttl :=
