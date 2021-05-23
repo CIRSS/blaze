@@ -50,7 +50,7 @@ func TestBlazegraphCmd_rdr_query_bobs_age(t *testing.T) {
 			`age
         	 ==
         	 23  
-		`)
+			`)
 	})
 
 	t.Run("bobs_age_and_its_source", func(t *testing.T) {
@@ -68,7 +68,7 @@ func TestBlazegraphCmd_rdr_query_bobs_age(t *testing.T) {
 			`age | src
 	         =============================================
     	     23  | http://example.net/homepage-listing.html
-		`)
+			`)
 	})
 
 	t.Run("provenance_of_bobs_age", func(t *testing.T) {
@@ -87,7 +87,7 @@ func TestBlazegraphCmd_rdr_query_bobs_age(t *testing.T) {
 			 =================================================================================
 			 http://purl.org/dc/elements/1.1/creator | http://example.com/crawlers#c1
 			 http://purl.org/dc/elements/1.1/source  | http://example.net/homepage-listing.html
-		`)
+			`)
 	})
 
 	t.Run("everyones_ages_and_their_provenance", func(t *testing.T) {
@@ -106,7 +106,7 @@ func TestBlazegraphCmd_rdr_query_bobs_age(t *testing.T) {
 			 ==============================================================================================
 			 Bob  | 23  | http://purl.org/dc/elements/1.1/creator | http://example.com/crawlers#c1
 			 Bob  | 23  | http://purl.org/dc/elements/1.1/source  | http://example.net/homepage-listing.html
-		`)
+			`)
 	})
 }
 
@@ -145,6 +145,45 @@ func TestBlazegraphCmd_rdr_query_alice_bob_and_charlies_ages(t *testing.T) {
 		util.LineContentsEqual(t, outputBuffer.String(), result)
 	}
 
+	t.Run("bobs_age_and_its_source", func(t *testing.T) {
+		assert_query_result(`
+			PREFIX bigdata: <http://bigdata.com/>
+			PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+			PREFIX dct:  <http://purl.org/dc/elements/1.1/>
+			
+			SELECT ?age ?source
+			WHERE {
+				?bob foaf:name "Bob" .
+				<<?bob foaf:age ?age>> dct:source ?src .
+				?src foaf:name ?source .
+			}
+			`,
+			`age | source
+			 ============
+			 23  | Sam			 
+			`)
+	})
+
+	t.Run("charlies_ages_and_their_sources", func(t *testing.T) {
+		assert_query_result(`
+			PREFIX bigdata: <http://bigdata.com/>
+			PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+			PREFIX dct:  <http://purl.org/dc/elements/1.1/>
+			
+			SELECT ?age ?source
+			WHERE {
+				?charlie foaf:name "Charlie" .
+				<<?charlie foaf:age ?age>> dct:source ?src .
+				?src foaf:name ?source .
+			}
+			`,
+			`age | source
+			 ============
+			 27  | Joe			 
+			 25  | Sam
+			`)
+	})
+
 	t.Run("everyones_ages_and_their_provenance", func(t *testing.T) {
 		assert_query_result(`
 			PREFIX bigdata: <http://bigdata.com/>
@@ -159,11 +198,11 @@ func TestBlazegraphCmd_rdr_query_alice_bob_and_charlies_ages(t *testing.T) {
 			}
 			`,
 			`name    | age | source
-			====================
-			Charlie | 27  | Joe
-			Alice   | 21  | Sam
-			Bob     | 23  | Sam
-			Charlie | 25  | Sam
+			 ====================
+			 Charlie | 27  | Joe
+			 Alice   | 21  | Sam
+			 Bob     | 23  | Sam
+			 Charlie | 25  | Sam
 			`)
 	})
 
@@ -181,10 +220,10 @@ func TestBlazegraphCmd_rdr_query_alice_bob_and_charlies_ages(t *testing.T) {
 			}
 			`,
 			`name    | age
-			============
-			Alice   | 21
-			Bob     | 23
-			Charlie | 25
+			 ============
+			 Alice   | 21
+			 Bob     | 23
+			 Charlie | 25
 			`)
 	})
 }
