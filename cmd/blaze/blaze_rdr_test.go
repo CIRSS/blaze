@@ -291,7 +291,7 @@ func TestBlazegraphCmd_rdr_query_two_levels_of_reification(t *testing.T) {
 
 	insert_data(`
 		@prefix x: <http://example/> .
-		<x:a1> <x:b1> <x:c1> .
+		<x:a> <x:b> <x:c> .
 	`)
 
 	assert_query_result(`
@@ -299,15 +299,41 @@ func TestBlazegraphCmd_rdr_query_two_levels_of_reification(t *testing.T) {
 		WHERE {
 			?s ?p ?o .
 		}`,
-		`s    | p    | o
-         ===================
-         x:a1 | x:b1 | x:c1
+		`s   | p   | o
+         ================
+         x:a | x:b | x:c
+		`)
+
+	assert_query_result(`
+		SELECT ?s ?p ?o
+		WHERE {
+			?s ?p ?o .
+			FILTER NOT EXISTS {
+				<<?s ?p ?o>> ?pp ?oo .
+			}
+		}
+		`,
+		`s   | p   | o
+         ================
+         x:a | x:b | x:c
 		`)
 
 	insert_data(`
 		@prefix x: <http://example/> .
 		<<<x:a> <x:b> <x:c>>> <x:d> <x:e> .
 	`)
+
+	assert_query_result(`
+		PREFIX x: <http://example/>
+		SELECT ?s ?p ?o
+			WHERE {
+				<<?s ?p ?o>> <x:d> <x:e> .
+			}
+			`,
+		`s   | p   | o
+		 ================
+		 x:a | x:b | x:c
+		`)
 
 	assert_query_result(`
 		SELECT ?s ?p ?o ?pp ?oo
@@ -334,5 +360,17 @@ func TestBlazegraphCmd_rdr_query_two_levels_of_reification(t *testing.T) {
 		`s   | p   | o   | pp  | oo  | ppp | ooo
 		 ============================================
 		 x:a | x:b | x:c | x:d | x:e | x:f | x:g
+		`)
+
+	assert_query_result(`
+		PREFIX x: <http://example/>
+		SELECT ?s ?p ?o
+			WHERE {
+				<<?s ?p ?o>> <x:d> <x:e> .
+			}
+			`,
+		`s   | p   | o
+		 ================
+		 x:a | x:b | x:c
 		`)
 }
