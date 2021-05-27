@@ -225,6 +225,29 @@ func TestBlazegraphCmd_rdr_query_alice_bob_and_charlies_ages(t *testing.T) {
 			`)
 	})
 
+	t.Run("everyones_ages_and_their_provenance_using_bind", func(t *testing.T) {
+		assert_query_result(`
+			PREFIX bigdata: <http://bigdata.com/>
+			PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+			PREFIX dct:  <http://purl.org/dc/elements/1.1/>
+
+			SELECT ?name ?age ?source
+			WHERE {
+				?person foaf:name ?name .
+				BIND ( <<?person foaf:age ?age>> AS ?t )
+				?t dct:source ?src .
+				?src foaf:name ?source .
+			}
+			`,
+			`name    | age | source
+			 ====================
+			 Charlie | 27  | Joe
+			 Alice   | 21  | Sam
+			 Bob     | 23  | Sam
+			 Charlie | 25  | Sam
+			`)
+	})
+
 	t.Run("ages_according_to_sam", func(t *testing.T) {
 		assert_query_result(`
 			PREFIX bigdata: <http://bigdata.com/>
@@ -266,7 +289,7 @@ func TestBlazegraphCmd_rdr_query_alice_bob_and_charlies_ages(t *testing.T) {
 			`)
 	})
 
-	t.Run("everything_triple_that_has_a_triple_for_its_subject", func(t *testing.T) {
+	t.Run("every_triple_that_has_a_triple_for_its_subject", func(t *testing.T) {
 		assert_query_result(`
 			PREFIX bigdata: <http://bigdata.com/>
 			PREFIX foaf: <http://xmlns.com/foaf/0.1/>
