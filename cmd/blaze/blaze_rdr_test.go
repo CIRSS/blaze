@@ -71,6 +71,25 @@ func TestBlazegraphCmd_rdr_query_bobs_age(t *testing.T) {
 			`)
 	})
 
+	t.Run("bobs_age_and_its_source_using_bind", func(t *testing.T) {
+		assert_query_result(`
+			PREFIX bigdata: <http://bigdata.com/>
+			PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+			PREFIX dct:  <http://purl.org/dc/elements/1.1/>
+			
+			SELECT ?age ?src
+			WHERE {
+				?bob foaf:name "Bob" .
+				BIND( <<?bob foaf:age ?age>> AS ?t )
+				?t dct:source ?src .
+			}
+			`,
+			`age | src
+	         =============================================
+    	     23  | http://example.net/homepage-listing.html
+			`)
+	})
+
 	t.Run("provenance_of_bobs_age", func(t *testing.T) {
 		assert_query_result(`
 			PREFIX bigdata: <http://bigdata.com/>
