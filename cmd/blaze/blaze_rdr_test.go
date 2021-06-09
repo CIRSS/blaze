@@ -360,6 +360,20 @@ func TestBlazegraphCmd_rdr_query_two_levels_of_reification(t *testing.T) {
          x:a | x:b | x:c
 		`)
 
+	assert_query_result(`
+		SELECT ?s ?p ?o
+		WHERE {
+			?s ?p ?o .
+			FILTER (
+				?p != <x:d>
+			)
+		}
+		`,
+		`s   | p   | o
+         ================
+         x:a | x:b | x:c
+		`)
+
 	insert_data(`
 		@prefix x: <http://example/> .
 		<<<x:a> <x:b> <x:c>>> <x:d> <x:e> .
@@ -388,6 +402,20 @@ func TestBlazegraphCmd_rdr_query_two_levels_of_reification(t *testing.T) {
 		 x:a | x:b | x:c | x:d | x:e
 		`)
 
+	assert_query_result(`
+		SELECT ?s ?p ?o
+		WHERE {
+			?s ?p ?o .
+			FILTER (
+				?p != <x:d>
+			)
+		}
+		`,
+		`s   | p   | o
+         ================
+         x:a | x:b | x:c
+		`)
+
 	insert_data(`
 		@prefix x: <http://example/> .
 		<<<<<x:a> <x:b> <x:c>>> <x:d> <x:e>>> <x:f> <x:g> .
@@ -414,5 +442,19 @@ func TestBlazegraphCmd_rdr_query_two_levels_of_reification(t *testing.T) {
 		`s   | p   | o
 		 ================
 		 x:a | x:b | x:c
+		`)
+
+	assert_query_result(`
+		SELECT ?s ?p ?o
+		WHERE {
+			?s ?p ?o .
+			FILTER (
+				?p != <x:d> && ?p != <x:f>
+			)
+		}
+		`,
+		`s   | p   | o
+         ================
+         x:a | x:b | x:c
 		`)
 }
