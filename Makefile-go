@@ -1,5 +1,6 @@
-BINARIES_DIR=./binaries
-LINUX_BINARY=${BINARIES_DIR}/blaze-0.2.5-linux-x86-64-static
+BINARIES_DIR=${REPRO_MNT}/binaries
+LINUX_BINARY_NAME=blaze-0.2.5-linux-x86-64-static
+LINUX_BINARY=${BINARIES_DIR}/${LINUX_BINARY_NAME}
 
 FORCE_STATIC_LINKING=-ldflags '-extldflags "-static"' 
 #GO_LINKER_FLAGS=${FORCE_STATIC_LINKING}
@@ -37,3 +38,5 @@ ${LINUX_BINARY}: depend
 	echo "\nExecutable dynamically links to these libraries:\n" &&		\
 	ldd ${LINUX_BINARY} | sort											\
 	) > ${LINUX_BINARY}.properties
+	rm -f ${BINARIES_DIR}/blaze
+	ln -s ${LINUX_BINARY_NAME} ${BINARIES_DIR}/blaze

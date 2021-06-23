@@ -44,7 +44,8 @@ ENV BASHRC ${HOME}/.bashrc
 USER  ${REPRO_USER}
 WORKDIR $HOME
 
-ENV BLAZEGRAPH_VER RELEASE_2_1_5  # (Next version: BLAZEGRAPH_VER 2_1_6_RC)
+# (Next version: BLAZEGRAPH_VER 2_1_6_RC)
+ENV BLAZEGRAPH_VER RELEASE_2_1_5
 ENV BLAZEGRAPH_RELEASES https://github.com/blazegraph/database/releases
 ENV BLAZEGRAPH_DOWNLOAD_DIR ${BLAZEGRAPH_RELEASES}/download/BLAZEGRAPH_${BLAZEGRAPH_VER}
 ENV BLAZEGRAPH_DOWNLOAD_JAR ${BLAZEGRAPH_DOWNLOAD_DIR}/blazegraph.jar
@@ -65,11 +66,9 @@ RUN echo '***** Start Blazegraph at login *****'                            \
 
 ENV GOPATH ${REPRO_MNT}/.gopath
 
-RUN echo 'PATH=${GOPATH}/bin:/usr/local/go/bin:$PATH' >> ${BASHRC}
+RUN echo "export PATH=${REPRO_MNT}/binaries:${GOPATH}/bin:/usr/local/go/bin:$PATH" >> ${BASHRC}
 RUN echo "export IN_RUNNING_REPRO=${REPRO_NAME}" >> ${BASHRC}
 RUN echo "cd ${REPRO_MNT}" >> ${BASHRC}
-
-ENV PATH /usr/local/go/bin:${PATH}
 
 CMD  /bin/bash -il
 
