@@ -1,4 +1,4 @@
-FROM docker.io/cirss/blazegraph-service
+FROM docker.io/cirss/repro-template
 
 COPY .repro .repro
 
@@ -25,7 +25,7 @@ RUN repro.setenv GOPATH '${REPRO_MNT}/.gopath'
 
 RUN repro.addpath /usr/local/go/bin
 RUN repro.addpath '${GOPATH}/bin'
-RUN repro.addpath '${REPRO_MNT}/binaries'
+RUN repro.addpath '${REPRO_MNT}/.repro/export/binaries'
 
 RUN repro.atstart start-blazegraph
 

@@ -1,4 +1,5 @@
-BINARIES_DIR=${REPRO_MNT}/binaries
+EXPORT_DIR=${REPRO_MNT}/.repro/export
+BINARIES_DIR=${EXPORT_DIR}/binaries
 LINUX_BINARY_NAME=blaze-0.2.6-linux-x86-64-static
 LINUX_BINARY=${BINARIES_DIR}/${LINUX_BINARY_NAME}
 
@@ -32,6 +33,7 @@ install: build
 package: ${LINUX_BINARY}
 
 ${LINUX_BINARY}: depend
+	mkdir -p ${BINARIES_DIR}
 	CGO_ENABLED=0 GOOS=linux go build -a ${GO_LINKER_FLAGS} -o ${LINUX_BINARY} ./cmd/...
 	(echo "\nExecutable has these properties:\n" &&						\
 	file -b ${LINUX_BINARY} | sed "s/, /\\n/g" && 						\
