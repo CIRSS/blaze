@@ -1,5 +1,4 @@
-EXPORT_DIR=${REPRO_MNT}/.repro/export
-BINARIES_DIR=${EXPORT_DIR}/binaries
+BINARIES_DIR=${REPRO_EXPORTED_DIR}/binaries
 LINUX_BINARY_NAME=blaze-0.2.6-linux-x86-64-static
 LINUX_BINARY=${BINARIES_DIR}/${LINUX_BINARY_NAME}
 
@@ -15,7 +14,7 @@ purge: clean
 	rm -f go.sum
 	chmod -R +w ${GOPATH}
 	rm -rf ${GOPATH}/*
-	rm -f ${EXPORT_DIR}/blaze
+	rm -f ${REPRO_EXPORTED_DIR}/blaze
 
 depend:
 	go mod tidy
@@ -44,6 +43,6 @@ ${LINUX_BINARY}: depend
 	) > ${LINUX_BINARY}.properties
 
 link-to-binary: ${LINUX_BINARY}
-	cd ${EXPORT_DIR} && \
-	rm -f blaze		 && \
+	cd ${REPRO_EXPORTED_DIR} && 				\
+	rm -f blaze		 && 						\
 	ln -s binaries/${LINUX_BINARY_NAME} blaze

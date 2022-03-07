@@ -19,13 +19,13 @@ ENV CIRSS_RELEASES 'https://github.com/cirss/${1}/releases/download/v${2}/'
 
 # install required repro modules
 RUN repro.require blazegraph-service 0.2.6 ${CIRSS_RELEASES}
-#RUN repro.require blaze local ${CIRSS_RELEASES}
+RUN repro.require blaze exported ${CIRSS_RELEASES}
 
 RUN repro.setenv GOPATH '${REPRO_MNT}/.gopath'
 
 RUN repro.addpath /usr/local/go/bin
 RUN repro.addpath '${GOPATH}/bin'
-RUN repro.addpath '${REPRO_MNT}/.repro/export'
+RUN repro.addpath '${REPRO_MNT}/.repro/exported'
 
 RUN repro.atstart start-blazegraph
 
