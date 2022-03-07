@@ -15,6 +15,7 @@ purge: clean
 	rm -f go.sum
 	chmod -R +w ${GOPATH}
 	rm -rf ${GOPATH}/*
+	rm -f ${EXPORT_DIR}/blaze
 
 depend:
 	go mod tidy
@@ -30,15 +31,19 @@ test: build
 install: build
 	go install ./...   
 
-package: ${LINUX_BINARY}
+package: link-to-binary
 
 ${LINUX_BINARY}: depend
 	mkdir -p ${BINARIES_DIR}
-	CGO_ENABLED=0 GOOS=linux go build -a ${GO_LINKER_FLAGS} -o ${LINUX_BINARY} ./cmd/...
+	cd ${BINARIES_DIR}
+	CGO_ENABLED=0 GOOS=linux go build -a ${GO_LINKER_FLAGS} -o ${LINUX_BINARY} ${REPRO_MNT}/cmd/...
 	(echo "\nExecutable has these properties:\n" &&						\
 	file -b ${LINUX_BINARY} | sed "s/, /\\n/g" && 						\
 	echo "\nExecutable dynamically links to these libraries:\n" &&		\
 	ldd ${LINUX_BINARY} | sort											\
 	) > ${LINUX_BINARY}.properties
-	rm -f ${BINARIES_DIR}/blaze
-	ln -s ${LINUX_BINARY_NAME} ${BINARIES_DIR}/blaze
+
+link-to-binary: ${LINUX_BINARY}
+	cd ${EXPORT_DIR} && \
+	rm -f blaze		 && \
+	ln -s binaries/${LINUX_BINARY_NAME} blaze
