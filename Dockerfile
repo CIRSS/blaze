@@ -23,9 +23,9 @@ RUN repro.require blaze exported ${CIRSS_RELEASES}
 
 RUN repro.setenv GOPATH '${REPRO_MNT}/.gopath'
 
-RUN repro.addpath /usr/local/go/bin
-RUN repro.addpath '${GOPATH}/bin'
-RUN repro.addpath '${REPRO_MNT}/.repro/exported'
+RUN repro.prefixpath /usr/local/go/bin
+RUN repro.prefixpath '${GOPATH}/bin'
+RUN repro.prefixpath '${REPRO_MNT}/.repro/exported'
 
 RUN repro.atstart start-blazegraph
 
