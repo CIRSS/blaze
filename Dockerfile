@@ -5,7 +5,6 @@ COPY .repro .repro
 USER repro
 
 # install required repro modules
-RUN repro.require go-dev master ${REPROS_DEV_BRANCH}
 RUN repro.require blaze exported --dev
 RUN repro.require blazegraph-service 0.2.6 ${CIRSS_RELEASE}
 
