@@ -4,10 +4,10 @@
 # set the default Make target
 default_target: help
 
+include repro-config
+repro-config:
+
 # identify the REPRO and associated Docker image
-REPRO_NAME=blaze
-REPRO_DOCKER_ORG=cirss
-REPRO_IMAGE_TAG=latest
 REPRO_IMAGE=${REPRO_DOCKER_ORG}/${REPRO_NAME}:${REPRO_IMAGE_TAG}
 
 # provide runtime options for Docker when running this REPRO
@@ -68,12 +68,12 @@ endif
 ## 
 ## # Targets for running the examples in this REPRO.
 
-## run-examples:           Run all of the examples.
-run-examples: 
-	$(RUN_IN_REPRO) 'repro.run_target run-demos'
+## run-demo:           Run the demo.
+run-demo: 
+	$(RUN_IN_REPRO) 'repro.run_target run-demo'
 
-clean-examples:         ## Delete all products of examples.
-	$(RUN_IN_REPRO) 'repro.run_target clean-demos'
+clean-demo:         ## Delete all products the demo.
+	$(RUN_IN_REPRO) 'repro.run_target clean-demo'
 
 
 # include .repro/030_Makefile.reports
@@ -182,7 +182,7 @@ endif
 ifndef IN_RUNNING_REPRO
 
 base-image:             ## Build the Docker base image.
-	docker build -f Dockerfile-base -t ${REPRO_DOCKER_ORG}/repro-builder-base:${REPRO_IMAGE_TAG} .
+	docker build -f Dockerfile-base -t ${REPRO_DOCKER_ORG}/repro-base:${REPRO_IMAGE_TAG} .
 
 endif
 
@@ -200,3 +200,5 @@ start:    start-image   ## Start the REPRO using the Docker image.
 endif
 
 ## 
+reset-makefile:         ## Replace local Makefile with latest version from repo
+	curl -L https://raw.githubusercontent.com/repros-dev/repro-template/master/Makefile -o Makefile
