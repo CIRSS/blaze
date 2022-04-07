@@ -1,0 +1,2 @@
+repro.require shell-notebook master ${REPROS_DEV} --dot
+repro.env REPRO_DEMO_TMP_DIRNAME tmp

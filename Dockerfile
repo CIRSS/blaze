@@ -9,7 +9,7 @@ USER repro
 
 # install required repro modules
 RUN repro.require repro master ${REPROS_DEV}
-RUN repro.require blaze exports --code
+RUN repro.require blaze exports --code --demo
 RUN repro.require blazegraph-service master ${CIRSS}
 
 RUN repro.atstart blazegraph-service.start

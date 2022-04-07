@@ -1,45 +1,43 @@
 #!/usr/bin/env bash
 
-RUNNER='../../common/run_script_example.sh'
-
 # *****************************************************************************
 
-bash ${RUNNER} SETUP "INITIALIZE BLAZEGRAPH INSTANCE WITH ADDRESS BOOK" << END_SCRIPT
+run_cell SETUP "INITIALIZE BLAZEGRAPH INSTANCE WITH ADDRESS BOOK" << END_CELL
 
 blaze destroy --dataset kb --quiet
 blaze create --dataset kb --quiet
 blaze import --file ../data/address-book.jsonld --format jsonld
 
-END_SCRIPT
+END_CELL
 
 # *****************************************************************************
 
-bash ${RUNNER} S1 "EXPORT ADDRESS BOOK AS JSON-LD" << END_SCRIPT
+run_cell S1 "EXPORT ADDRESS BOOK AS JSON-LD" << END_CELL
 
 blaze export --format jsonld
 
-END_SCRIPT
+END_CELL
 
 # *****************************************************************************
 
-bash ${RUNNER} S1 "EXPORT ADDRESS BOOK AS TURTLE" << END_SCRIPT
+run_cell S1 "EXPORT ADDRESS BOOK AS TURTLE" << END_CELL
 
 blaze export --format ttl
 
-END_SCRIPT
+END_CELL
 
 # *****************************************************************************
 
-bash ${RUNNER} S1 "EXPORT ADDRESS BOOK AS N-TRIPLES" << END_SCRIPT
+run_cell S1 "EXPORT ADDRESS BOOK AS N-TRIPLES" << END_CELL
 
 blaze export --format nt | sort
 
-END_SCRIPT
+END_CELL
 
 # *****************************************************************************
 
-bash ${RUNNER} S1 "EXPORT ADDRESS BOOK AS RDF-XML" << END_SCRIPT
+run_cell S1 "EXPORT ADDRESS BOOK AS RDF-XML" << END_CELL
 
 blaze export --format xml
 
-END_SCRIPT
+END_CELL
