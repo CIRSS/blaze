@@ -8,7 +8,6 @@ RUN bash /repro/dist/setup
 USER repro
 
 # install required repro modules
-RUN repro.require repro master ${REPROS_DEV}
 RUN repro.require blaze exports --code --demo
 RUN repro.require blazegraph-service master ${CIRSS}
 
