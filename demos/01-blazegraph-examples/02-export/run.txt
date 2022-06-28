@@ -1,24 +1,17 @@
-
-********************************************** CELL SETUP ************************************************
-
-# INITIALIZE BLAZEGRAPH INSTANCE WITH ADDRESS BOOK
+=========================================== BASH CELL SETUP ==============================================
 
 blaze destroy --dataset kb --quiet
 blaze create --dataset kb --quiet
 blaze import --file ../data/address-book.jsonld --format jsonld
 
-------------------------------------------- SETUP OUTPUTS ------------------------------------------------
+--------------------------------------------- OUTPUTS -------------------------------------------------
+=======================================================================================================
 
-
-
-********************************************** CELL S1 ************************************************
-
-# EXPORT ADDRESS BOOK AS JSON-LD
+=========================================== BASH CELL S1 ==============================================
 
 blaze export --format jsonld
 
-------------------------------------------- S1 OUTPUTS ------------------------------------------------
-
+--------------------------------------------- OUTPUTS -------------------------------------------------
 [ {
   "@id" : "http://learningsparql.com/ns/data#i0432",
   "http://learningsparql.com/ns/addressbook#email" : [ {
@@ -70,16 +63,13 @@ blaze export --format jsonld
     "@value" : "(245) 732-8991"
   } ]
 } ]
+=======================================================================================================
 
-
-********************************************** CELL S1 ************************************************
-
-# EXPORT ADDRESS BOOK AS TURTLE
+=========================================== BASH CELL S1 ==============================================
 
 blaze export --format ttl
 
-------------------------------------------- S1 OUTPUTS ------------------------------------------------
-
+--------------------------------------------- OUTPUTS -------------------------------------------------
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix sesame: <http://www.openrdf.org/schema/sesame#> .
@@ -108,16 +98,13 @@ blaze export --format ttl
 	<http://learningsparql.com/ns/addressbook#homeTel> "(245) 646-5488"^^xsd:string ;
 	<http://learningsparql.com/ns/addressbook#lastname> "Marshall"^^xsd:string ;
 	<http://learningsparql.com/ns/addressbook#mobileTel> "(245) 732-8991"^^xsd:string .
+=======================================================================================================
 
-
-********************************************** CELL S1 ************************************************
-
-# EXPORT ADDRESS BOOK AS N-TRIPLES
+=========================================== BASH CELL S1 ==============================================
 
 blaze export --format nt | sort
 
-------------------------------------------- S1 OUTPUTS ------------------------------------------------
-
+--------------------------------------------- OUTPUTS -------------------------------------------------
 <http://learningsparql.com/ns/data#i0432> <http://learningsparql.com/ns/addressbook#email> "richard49@hotmail.com"^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://learningsparql.com/ns/data#i0432> <http://learningsparql.com/ns/addressbook#firstname> "Richard"^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://learningsparql.com/ns/data#i0432> <http://learningsparql.com/ns/addressbook#homeTel> "(229) 276-5135"^^<http://www.w3.org/2001/XMLSchema#string> .
@@ -133,16 +120,13 @@ blaze export --format nt | sort
 <http://learningsparql.com/ns/data#i9771> <http://learningsparql.com/ns/addressbook#homeTel> "(245) 646-5488"^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://learningsparql.com/ns/data#i9771> <http://learningsparql.com/ns/addressbook#lastname> "Marshall"^^<http://www.w3.org/2001/XMLSchema#string> .
 <http://learningsparql.com/ns/data#i9771> <http://learningsparql.com/ns/addressbook#mobileTel> "(245) 732-8991"^^<http://www.w3.org/2001/XMLSchema#string> .
+=======================================================================================================
 
-
-********************************************** CELL S1 ************************************************
-
-# EXPORT ADDRESS BOOK AS RDF-XML
+=========================================== BASH CELL S1 ==============================================
 
 blaze export --format xml
 
-------------------------------------------- S1 OUTPUTS ------------------------------------------------
-
+--------------------------------------------- OUTPUTS -------------------------------------------------
 <?xml version="1.0" encoding="UTF-8"?>
 <rdf:RDF
 	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -182,4 +166,5 @@ blaze export --format xml
 </rdf:Description>
 
 </rdf:RDF>
+=======================================================================================================
 
