@@ -1,0 +1,47 @@
+
+------- Cleaning example 01-blazegraph-examples/ ----------------
+
+------- Cleaning example 01-import/ ----------------
+removed './run.txt'
+removed './tmp/S1.sh'
+removed './tmp/S1.txt'
+removed './tmp/S2.sh'
+removed './tmp/S2.txt'
+removed './tmp/S3.sh'
+removed './tmp/S3.txt'
+removed './tmp/S4.sh'
+removed './tmp/S4.txt'
+removed './tmp/SETUP.sh'
+removed './tmp/SETUP.txt'
+rmdir: removing directory, './tmp'
+rmdir: removing directory, './products'
+
+------- Cleaning example 02-export/ ----------------
+removed './run.txt'
+removed './tmp/S1.sh'
+removed './tmp/S1.txt'
+removed './tmp/SETUP.sh'
+removed './tmp/SETUP.txt'
+rmdir: removing directory, './tmp'
+rmdir: removing directory, './products'
+
+------- Cleaning example 03-property-paths/ ----------------
+removed './run.txt'
+removed './tmp/S1.sh'
+removed './tmp/S1.txt'
+removed './tmp/S2.sh'
+removed './tmp/S2.txt'
+removed './tmp/S3.sh'
+removed './tmp/S3.txt'
+removed './tmp/S4.sh'
+removed './tmp/S4.txt'
+removed './tmp/S5.sh'
+removed './tmp/S5.txt'
+removed './tmp/S6.sh'
+removed './tmp/S6.txt'
+removed './tmp/S7.sh'
+removed './tmp/S7.txt'
+removed './tmp/SETUP.sh'
+removed './tmp/SETUP.txt'
+rmdir: removing directory, './tmp'
+rmdir: removing directory, './products'

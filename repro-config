@@ -3,7 +3,7 @@ REPRO_DOCKER_ORG=cirss
 REPRO_IMAGE_TAG=latest
 
 REPRO_DOCKER_OPTIONS=-p 9999:9999
-
+#REPRO_LOGGING_LEVEL=debug
 
 image:                  build-image   ## 
 start:                  start-repro   ## 
